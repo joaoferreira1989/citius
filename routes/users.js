@@ -3,10 +3,7 @@ const router = express.Router();
 const { getAuthData } = require('../lib/req/auth');
 
 router.get('/', function (req, res, next) {
-  getAuthData()
-    .then((response) => {
-      console.log('------------ DONE ------------');
-    });
+  getAuthData();
 
   res.send('respond with a resource');
 });
