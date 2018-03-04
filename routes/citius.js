@@ -3,10 +3,11 @@ const router = express.Router();
 const { doFetch } = require('../lib/req/citius');
 
 router.get('/', function (req, res, next) {
-    const initialDate = '10-01-2018';
-    const finalDate = '10-01-2018';
+    const initialDate = '03-01-2018';
+    const finalDate = '03-01-2018';
 
-    doFetch(initialDate, finalDate).then(() => {
+    doFetch(initialDate, finalDate).then((response) => {
+        console.log(response);
         res.send('fetching done');
     });
 });
