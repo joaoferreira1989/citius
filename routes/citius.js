@@ -26,7 +26,7 @@ router.get('/', function (req, res, next) {
                 };
             });
         });
-        var date = new Date();
+        const date = new Date();
         const timestamp = date.getTime();
         const report = exportToExcel(csvData);
 
