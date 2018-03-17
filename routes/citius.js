@@ -5,15 +5,15 @@ const { doFetch } = require('../lib/req/citius');
 const { exportToExcel } = require('../lib/exporter/csv');
 
 router.get('/', function (req, res, next) {
-    const initialDate = '03-01-2018';
-    const finalDate = '03-01-2018';
+    const initialDate = req.query.startdate;
+    const finalDate = req.query.enddate;
 
     doFetch(initialDate, finalDate).then((response) => {
         const csvData = response.map((act) => {
             return act.map(({ process, people }) => {
                 const admin = people.find((person) => {
                     return person.type === PEOPLE_TYPES.ADMINISTRADOR_INSOLVENCIA;
-                });
+                }) || {};
 
                 return {
                     processNumber: process.processDetails.number,
