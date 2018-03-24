@@ -11,18 +11,24 @@ router.get('/', function (req, res, next) {
     doFetch(initialDate, finalDate).then((response) => {
         const csvData = response.map((act) => {
             return act.map(({ process, people }) => {
-                const admin = people.find((person) => {
-                    return person.type === PEOPLE_TYPES.ADMINISTRADOR_INSOLVENCIA;
-                }) || {};
+                const admins = people.reduce((acc, person) => {
+                    if (person.type === PEOPLE_TYPES.ADMINISTRADOR_INSOLVENCIA) {
+                        acc.push(person);
+                    }
 
+                    return acc;
+                }, []) || [];
+                
                 return {
                     processNumber: process.processDetails.number,
                     date: process.date,
                     act: process.act,
                     court: process.court,
                     judgement: process.processDetails.judgement,
-                    admin: admin.name,
-                    adminNif: admin.nif
+                    admin1: admins[0] ? admins[0].name : undefined,
+                    admin1Nif: admins[0] ? admins[0].nif : undefined,
+                    admin2: admins[1] ? admins[1].name : undefined,
+                    admin2Nif: admins[1] ? admins[1].nif : undefined
                 };
             });
         });
