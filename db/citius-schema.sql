@@ -129,6 +129,7 @@ CREATE TABLE `process` (
   `species` varchar(256) NOT NULL DEFAULT '',
   `date` date NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `number` (`number`),
   KEY `process_court_id` (`court_id`),
   KEY `process_act_id` (`act_id`),
   KEY `process_judgement_id` (`judgement_id`),
@@ -147,4 +148,4 @@ CREATE TABLE `process` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-28 23:27:17
+-- Dump completed on 2018-03-28 23:37:47
