@@ -6,8 +6,8 @@ const { writeToFile } = require('../lib/tools/fs-helper');
 const { insertProcess } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
-    const initialDate = '05-02-2018';
-    const finalDate = '06-02-2018';
+    const initialDate = '01-02-2018';
+    const finalDate = '01-02-2018';
 
     doFetch(initialDate, finalDate).then((response) => {
         const csvData = response.map((act) => {
@@ -17,7 +17,7 @@ router.get('/', function (req, res, next) {
                         console.log('Process ' + processId + ' inserted!');
                     })
                     .catch((error) => {
-                        console.log('Error inserting process: ' + process.processDetails.number + ' - ' + process.date);
+                        console.log('Error inserting process: ' + process.processDetails.number + ' - ' + process.date, error.sqlMessage);
                     });
             });
         });

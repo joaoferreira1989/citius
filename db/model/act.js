@@ -4,8 +4,10 @@ function getActIdByName(connection, name) {
             if (error) { return reject(error); }
 
             if (rows.length > 0) {
+                console.log('found act', rows);
                 resolve(rows[0].id);
             } else {
+                console.log('not found act', rows);
                 addAct(connection, name)
                     .then((insertId) => {
                         resolve(insertId);

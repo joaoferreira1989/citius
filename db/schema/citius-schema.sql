@@ -25,7 +25,8 @@ DROP TABLE IF EXISTS `act`;
 CREATE TABLE `act` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(254) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -39,7 +40,8 @@ DROP TABLE IF EXISTS `court`;
 CREATE TABLE `court` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(254) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -55,6 +57,7 @@ CREATE TABLE `judgement` (
   `name` varchar(254) NOT NULL DEFAULT '',
   `court_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
   KEY `judgement_court_id` (`court_id`),
   CONSTRAINT `judgement_court_id` FOREIGN KEY (`court_id`) REFERENCES `court` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -148,4 +151,4 @@ CREATE TABLE `process` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-28 23:37:47
+-- Dump completed on 2018-03-30 15:16:21

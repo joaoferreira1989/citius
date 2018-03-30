@@ -6,9 +6,9 @@ const { getJudgementIdByName } = require('../model/judgement');
 
 function insertProcess(process) {
     return new Promise((resolve, reject) => {
-        pool.getConnection((err, connection) => {
-            connection.beginTransaction(function (err) {
-                if (err) { return reject(err); }
+        pool.getConnection((error, connection) => {
+            connection.beginTransaction(function (error) {
+                if (error) { return reject(error); }
 
                 const number = process.processDetails.number;
                 const reference = process.reference;
@@ -29,26 +29,28 @@ function insertProcess(process) {
                                     .then((judgementId) => {
                                         addProcess(connection, number, reference, courtId, actId, judgementId, species, date)
                                             .then((processId) => {
-                                                connection.commit((err) => {
-                                                    if (err) { connection.rollback(() => { return reject(err); }); }
+                                                connection.commit((error) => {
+                                                    if (error) {
+                                                        connection.rollback(() => { return reject(error); });
+                                                    }
 
                                                     resolve(processId);
                                                 });
                                             })
                                             .catch((error) => {
-                                                connection.rollback(() => { return reject(err); });
+                                                connection.rollback(() => { return reject(error); });
                                             });
                                     })
                                     .catch((error) => {
-                                        connection.rollback(() => { return reject(err); });
+                                        connection.rollback(() => { return reject(error); });
                                     });
                             })
                             .catch((error) => {
-                                connection.rollback(() => { return reject(err); });
+                                connection.rollback(() => { return reject(error); });
                             });
                     })
                     .catch((error) => {
-                        connection.rollback(() => { return reject(err); });
+                        connection.rollback(() => { return reject(error); });
                     })
                     .then(() => {
                         connection.release();
