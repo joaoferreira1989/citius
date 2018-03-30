@@ -8,29 +8,24 @@ router.get('/', function (req, res, next) {
     const initialDate = '01-02-2018';
     const finalDate = '01-02-2018';
 
-    doFetch(initialDate, finalDate).then((response) => {
-        const processList = response.reduce((acc, act) => {
-            act.forEach(({ process, people }) => {
-                acc.push(process);
-            });
-
-            return acc;
-        }, []);
-
-        insertProcessList(processList);
+    doFetch(initialDate, finalDate).then((actList) => {
+        actList.forEach((processList) => {
+            insertProcesses(processList);
+        });
 
         return res.send('done');
     });
 });
 
-function insertProcessList(processList) {
+function insertProcesses(processList) {
     let insertPromise = Promise.resolve();
 
     for (let i = 0; i < processList.length; i++) {
         insertPromise = insertPromise.then(() => {
-            let process = processList[i];
+            let process = processList[i].process;
+            let processPeople = processList[i].people;
 
-            return insertProcess(process)
+            return insertProcess(process, processPeople)
                 .then((processId) => {
                     console.log('Process ' + processId + ' inserted!');
                 })
