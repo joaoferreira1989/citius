@@ -4,6 +4,7 @@ const { getCourtIdByName } = require('../model/court');
 const { getActIdByName } = require('../model/act');
 const { getJudgementIdByName } = require('../model/judgement');
 const { getPeopleIdByNif } = require('../model/people');
+const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS } = require('../../lib/tools/constants');
 
 function insertProcess(process, processPeople) {
@@ -89,13 +90,45 @@ function addProcess(connection, processPeople, _number, _reference, _court_id, _
 
                 addPeople(connection, processPeople, rows.insertId)
                     .then((peopleIds) => {
-                        resolve(rows.insertId);
+                        addAllProcessPeople(connection, peopleIds, rows.insertId)
+                            .then((personPeopleIds) => {
+                                resolve(rows.insertId);
+                            })
+                            .catch((error) => {
+                                connection.rollback(() => { return reject(error); });
+                            });
                     })
                     .catch((error) => {
                         connection.rollback(() => { return reject(error); });
                     });
             }
         );
+    });
+}
+
+function addAllProcessPeople(connection, peopleIds, processId) {
+    return new Promise((resolve, reject) => {
+        let insertPromise = Promise.resolve();
+        let personPeopleIds = [];
+
+        for (let i = 0; i < peopleIds.length; i++) {
+            insertPromise = insertPromise.then(() => {
+                let personId = peopleIds[i];
+
+                addProcessPeople(connection, processId, personId)
+                    .then((processPersonId) => {
+                        personPeopleIds.push(processPersonId);
+
+                        // Resolve when all ProcessPeople is inserted
+                        if (personPeopleIds.length === peopleIds.length) {
+                            resolve(personPeopleIds);
+                        }
+                    })
+                    .catch((error) => {
+                        connection.rollback(() => { return reject(error); });
+                    });
+            });
+        }
     });
 }
 
@@ -111,7 +144,7 @@ function addPeople(connection, processPeople, processId) {
 
                 return getPeopleIdByNif(connection, person.name, person.nif, personTypeId)
                     .then((personId) => {
-                        peopleIds.push(peopleIds);
+                        peopleIds.push(personId);
 
                         // Resolve when all people is inserted
                         if (peopleIds.length === processPeople.length) {
