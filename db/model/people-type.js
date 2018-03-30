@@ -1,6 +1,4 @@
-const { connection } = require('../db');
-
-function getAllPeopleTypes() {
+function getAllPeopleTypes(connection) {
     return connection.query('SELECT * from `people_type`', function (error, results) {
         if (error) throw error;
 

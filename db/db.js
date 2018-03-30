@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const { dbConfig } = require('./db.config');
-const connection = mysql.createConnection(dbConfig);
+const pool = mysql.createPool(dbConfig);
 
 module.exports = {
-    connection
+    pool
 };
