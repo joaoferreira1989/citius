@@ -6,7 +6,7 @@ const { insertProcess } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
     const initialDate = '01-02-2018';
-    const finalDate = '02-02-2018';
+    const finalDate = '01-02-2018';
 
     doFetch(initialDate, finalDate).then((response) => {
         const processList = response.reduce((acc, act) => {

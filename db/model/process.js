@@ -19,7 +19,7 @@ function insertProcess(process) {
 
                 const species = process.species;
                 const processDate = process.date;
-                const date = moment(new Date(processDate)).format('YYYY-MM-DD');
+                const date = moment(processDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
                 return getCourtIdByName(connection, court)
                     .then((courtId) => {
