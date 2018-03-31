@@ -112,8 +112,9 @@ CREATE TABLE `process` (
   `judgement_id` int(11) unsigned NOT NULL,
   `species` varchar(256) NOT NULL DEFAULT '',
   `date` date NOT NULL,
+  `act_aggregator_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `number` (`number`),
+  UNIQUE KEY `number_act_aggregator` (`number`,`act_aggregator_id`),
   KEY `process_court_id` (`court_id`),
   KEY `process_act_id` (`act_id`),
   KEY `process_judgement_id` (`judgement_id`),
@@ -151,4 +152,4 @@ CREATE TABLE `process_people` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-30 19:38:54
+-- Dump completed on 2018-03-31 18:49:25

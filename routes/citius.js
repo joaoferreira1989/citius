@@ -7,8 +7,13 @@ const { exportToExcel } = require('../lib/exporter/csv');
 router.get('/', function (req, res, next) {
     const initialDate = req.query.startdate;
     const finalDate = req.query.enddate;
+    const actsList = [
+        'Pub. - Sentença Declaração Insolvência',
+        'Pub. - Destituição / Nomeação Administrador',
+        'Pub. - Nomeação Administrador Provisório'
+    ];
 
-    doFetch(initialDate, finalDate).then((response) => {
+    doFetch(initialDate, finalDate, actsList).then((response) => {
         const csvData = response.map((act) => {
             return act.map(({ process, people }) => {
                 const admins = people.reduce((acc, person) => {
@@ -18,7 +23,7 @@ router.get('/', function (req, res, next) {
 
                     return acc;
                 }, []) || [];
-                
+
                 return {
                     processNumber: process.processDetails.number,
                     date: process.date,

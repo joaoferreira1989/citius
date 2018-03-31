@@ -5,7 +5,7 @@ const { getActIdByName } = require('../model/act');
 const { getJudgementIdByName } = require('../model/judgement');
 const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
-const { DB_PEOPLE_TYPE_IDS } = require('../../lib/tools/constants');
+const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
 function insertProcess(process, processPeople) {
     return new Promise((resolve, reject) => {
@@ -74,6 +74,8 @@ function insertProcess(process, processPeople) {
 
 function addProcess(connection, processPeople, _number, _reference, _court_id, _act_id, _judgement_id, _species, _date) {
     return new Promise((resolve, reject) => {
+        const _act_aggregator_id = ACT_ID_AGGREGATORS_MAP[_act_id];
+
         connection.query(
             'INSERT INTO `process` SET ?',
             {
@@ -83,7 +85,8 @@ function addProcess(connection, processPeople, _number, _reference, _court_id, _
                 act_id: _act_id,
                 judgement_id: _judgement_id,
                 species: _species,
-                date: _date
+                date: _date,
+                act_aggregator_id: _act_aggregator_id
             },
             (error, rows) => {
                 if (error) { return reject(error); }

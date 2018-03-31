@@ -7,8 +7,13 @@ const { insertProcess } = require('../db/model/process');
 router.get('/', function (req, res, next) {
     const initialDate = '01-02-2018';
     const finalDate = '01-02-2018';
+    const actsToFetchList = [
+        'Pub. - Sentença Declaração Insolvência',
+        'Pub. - Destituição / Nomeação Administrador',
+        'Pub. - Nomeação Administrador Provisório'
+    ];
 
-    doFetch(initialDate, finalDate).then((actList) => {
+    doFetch(initialDate, finalDate, actsToFetchList).then((actList) => {
         actList.forEach((processList) => {
             insertProcesses(processList);
         });
