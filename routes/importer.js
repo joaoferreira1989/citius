@@ -5,8 +5,8 @@ const { doFetch } = require('../lib/req/citius');
 const { insertProcess } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
-    const initialDate = '01-02-2018';
-    const finalDate = '01-02-2018';
+    const initialDate = '01-04-2018';
+    const finalDate = '07-04-2018';
     const actsToFetchList = [
         'Pub. - Sentença Declaração Insolvência',
         'Pub. - Destituição / Nomeação Administrador',

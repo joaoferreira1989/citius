@@ -26,46 +26,39 @@ function insertProcess(process, processPeople) {
 
                 return getCourtIdByName(connection, court)
                     .then((courtId) => {
-                        getActIdByName(connection, act)
+                        return getActIdByName(connection, act)
                             .then((actId) => {
-                                getJudgementIdByName(connection, judgement, courtId)
-                                    .then((judgementId) => {
-                                        addProcess(
-                                            connection,
-                                            processPeople,
-                                            number,
-                                            reference,
-                                            courtId,
-                                            actId,
-                                            judgementId,
-                                            species,
-                                            date)
-                                            .then((processId) => {
-                                                connection.commit((error) => {
-                                                    if (error) {
-                                                        connection.rollback(() => { return reject(error); });
-                                                    }
-
-                                                    resolve(processId);
-                                                });
-                                            })
-                                            .catch((error) => {
-                                                connection.rollback(() => { return reject(error); });
-                                            });
-                                    })
-                                    .catch((error) => {
-                                        connection.rollback(() => { return reject(error); });
-                                    });
+                                return { actId, courtId };
                             })
-                            .catch((error) => {
-                                connection.rollback(() => { return reject(error); });
-                            });
+                            .catch((error) => reject(error));
+                    })
+                    .then(({ actId, courtId }) => {
+                        return getJudgementIdByName(connection, judgement, courtId)
+                            .then((judgementId) => {
+                                return { actId, courtId, judgementId };
+                            })
+                            .catch((error) => reject(error));
+                    })
+                    .then(({ actId, courtId, judgementId }) => {
+                        return addProcess(
+                            connection, processPeople, number,
+                            reference, courtId, actId,
+                            judgementId, species, date
+                        ).catch((error) => reject(error));
+                    })
+                    .then((processId) => {
+                        return connection.commit((error) => {
+                            if (error) {
+                                connection.rollback(() => reject(error));
+                            }
+                            resolve(processId);
+                        });
                     })
                     .catch((error) => {
-                        connection.rollback(() => { return reject(error); });
+                        return connection.rollback(() => reject(error));
                     })
                     .then(() => {
-                        connection.release();
+                        return connection.release();
                     });
             });
         });
