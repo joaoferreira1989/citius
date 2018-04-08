@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var citius = require('./routes/citius');
 var importer = require('./routes/importer');
+var admins = require('./routes/admins');
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 app.use('/', index);
 app.use('/citius', citius);
 app.use('/importer', importer);
+app.use('/admins', admins);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

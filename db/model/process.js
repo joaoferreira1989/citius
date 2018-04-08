@@ -7,6 +7,29 @@ const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
+function getTopAdmIns() {
+    const query =
+        `select people.name, people.nif, count(process.id) as process_nr from process
+        left join process_people on process.id = process_people.process_id
+        left join people on people.id = process_people.people_id
+        where people.people_type_id = ?
+        group by people.id
+        order by process_nr desc;`;
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                [1],
+                (error, rows) => {
+                    if (error) { return reject(error); }
+
+                    resolve(rows);
+                });
+        });
+    });
+}
+
 function insertProcess(process, processPeople) {
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
@@ -160,5 +183,6 @@ function addPeople(connection, processPeople, processId) {
 }
 
 module.exports = {
-    insertProcess
+    insertProcess,
+    getTopAdmIns
 };
