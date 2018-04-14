@@ -13,6 +13,7 @@ function getTopAdmIns() {
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
         where people.people_type_id = ?
+        and process.act_id = 13
         group by people.id
         order by process_nr desc;`;
 
