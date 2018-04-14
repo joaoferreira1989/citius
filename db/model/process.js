@@ -5,7 +5,7 @@ const { getActIdByName } = require('../model/act');
 const { getJudgementIdByName } = require('../model/judgement');
 const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
-const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
+const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP, ACTS } = require('../../lib/tools/constants');
 
 function getTopAdmIns() {
     const query =
@@ -31,6 +31,30 @@ function getTopAdmIns() {
     });
 }
 
+function getProcessIdByNumberActAggregatorId(number, actAggregatorId) {
+    const query =
+        `select * from process
+            where number = ?
+            and act_aggregator_id = ?`;
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                [number, actAggregatorId],
+                (error, rows) => {
+                    if (error) { return reject(error); }
+
+                    if (rows.length > 0) {
+                        resolve(rows[0].id);
+                    } else {
+                        resolve();
+                    }
+                });
+        });
+    });
+}
+
 function insertProcess(process, processPeople) {
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
@@ -48,7 +72,18 @@ function insertProcess(process, processPeople) {
                 const processDate = process.date;
                 const date = moment(processDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
-                return getCourtIdByName(connection, court)
+                const actId = ACTS[act].id;
+                const actAggregatorId = ACTS[act].aggregatorId;
+
+                return getProcessIdByNumberActAggregatorId(number, actAggregatorId)
+                    .then((processId) => {
+                        if (processId) {
+                            console.log('Duplicated process: nr: ' + number + ', actAggrId: ' + actAggregatorId);
+                            resolve(processId);
+                        } else {
+                            return getCourtIdByName(connection, court);
+                        }
+                    })
                     .then((courtId) => {
                         return getActIdByName(connection, act)
                             .then((actId) => {
