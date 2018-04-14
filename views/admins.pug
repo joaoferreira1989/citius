@@ -2,6 +2,19 @@ extends layout
 
 block content
   script(src='/javascripts/admins.js')
-  h2= 'Administradores de Insolvência'
 
-  table#table-1
+  div.inso
+    h3= 'Insolvências'
+    table#table-1.table.table-striped.table-bordered
+
+  div.sub
+    h3= 'Substituições'
+    table#table-2.table.table-striped.table-bordered
+
+  div.per
+    h3= 'PER-PEAP'
+    table#table-3.table.table-striped.table-bordered
+
+  div.insu
+    h3= 'Insuficiência de Massa'
+    table#table-4.table.table-striped.table-bordered

@@ -7,13 +7,13 @@ const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
-function getTopAdmIns() {
+function getTopAdmIns(actAggregatorId = 1) {
     const query =
         `select people.name, people.nif, count(process.id) as process_nr from process
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
         where people.people_type_id = ?
-        and process.act_id = 13
+        and process.act_aggregator_id = ?
         group by people.id
         order by process_nr desc;`;
 
@@ -21,7 +21,7 @@ function getTopAdmIns() {
         pool.getConnection((error, connection) => {
             connection.query(
                 query,
-                [1],
+                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, actAggregatorId],
                 (error, rows) => {
                     if (error) { return reject(error); }
 

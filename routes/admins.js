@@ -7,7 +7,9 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/get-all', function (req, res, next) {
-    getTopAdmIns().then((topAdmins) => {
+    const actaggregatorid = parseInt(req.query.actaggregatorid) || 1;
+
+    getTopAdmIns(actaggregatorid).then((topAdmins) => {
         return res.send({
             data: topAdmins
         });
