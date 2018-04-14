@@ -7,7 +7,7 @@ const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
-function fetchProcesses(actAggregatorId = 1) {
+function fetchProcessesTotal(actAggregatorId = 1) {
     const query =
         `select count(process.number) as count, process.date as date from process
             left join process_people on process.id = process_people.process_id
@@ -24,6 +24,7 @@ function fetchProcesses(actAggregatorId = 1) {
                 (error, rows) => {
                     if (error) { return reject(error); }
 
+                    connection.release();
                     resolve(rows);
                 });
         });
@@ -48,6 +49,7 @@ function getTopAdmIns(actAggregatorId = 1) {
                 (error, rows) => {
                     if (error) { return reject(error); }
 
+                    connection.release();
                     resolve(rows);
                 });
         });
@@ -209,5 +211,5 @@ function addPeople(connection, processPeople, processId) {
 module.exports = {
     insertProcess,
     getTopAdmIns,
-    fetchProcesses
+    fetchProcessesTotal
 };

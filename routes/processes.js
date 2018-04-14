@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { fetchProcesses } = require('../db/model/process');
+const { fetchProcessesTotal } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
     res.render('processes');
 });
 
 router.get('/get', function (req, res, next) {
-    fetchProcesses().then((processes) => {
+    const actaggregatorid = parseInt(req.query.actaggregatorid) || 1;
+
+    fetchProcessesTotal(actaggregatorid).then((processes) => {
         return res.send(processes);
     });
 });

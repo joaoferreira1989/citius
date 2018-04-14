@@ -12,10 +12,10 @@ $(document).ready(function () {
         animationEnabled: true,
         theme: 'light2',
         title: {
-            text: 'Número de insolvências'
+            text: ''
         },
         axisX: {
-            valueFormatString: "MMM-DD"
+            valueFormatString: "DD-MMM-YY"
         },
         axisY: {},
         toolTip: {
@@ -28,7 +28,7 @@ $(document).ready(function () {
         data: [
             {
                 type: "line",
-                name: "Número de insolvências",
+                name: "",
                 showInLegend: true,
                 yValueFormatString: "#,##0",
                 dataPoints: []
@@ -45,11 +45,42 @@ $(document).ready(function () {
     }
 
     $.ajax({
-        url: '/processes/get',
+        url: '/processes/get?actaggregatorid=1',
         success: (result) => {
-            console.log(result);
+            options.title.text = 'Insolvências';
             options.data[0].dataPoints = buildDataPoints(result);
-            $("#processesChartContainer").CanvasJSChart(options);
+            options.data[0].name = 'Insolvências';
+            $("#processesChartContainer1").CanvasJSChart(options);
+        }
+    });
+
+    $.ajax({
+        url: '/processes/get?actaggregatorid=2',
+        success: (result) => {
+            options.title.text = 'Substituições';
+            options.data[0].dataPoints = buildDataPoints(result);
+            options.data[0].name = 'Substituições';
+            $("#processesChartContainer2").CanvasJSChart(options);
+        }
+    });
+
+    $.ajax({
+        url: '/processes/get?actaggregatorid=3',
+        success: (result) => {
+            options.title.text = 'PER-PEAP';
+            options.data[0].dataPoints = buildDataPoints(result);
+            options.data[0].name = 'PER-PEAP';
+            $("#processesChartContainer3").CanvasJSChart(options);
+        }
+    });
+
+    $.ajax({
+        url: '/processes/get?actaggregatorid=4',
+        success: (result) => {
+            options.title.text = 'Insuficiência de Massa';
+            options.data[0].dataPoints = buildDataPoints(result);
+            options.data[0].name = 'Insuficiência de Massa';
+            $("#processesChartContainer4").CanvasJSChart(options);
         }
     });
 });
