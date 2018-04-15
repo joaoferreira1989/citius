@@ -15,35 +15,40 @@ const graphOptions = {
         cursor: "pointer",
         itemclick: toggleDataSeries
     },
-    data: [
-        {
-            type: "column",
-            color: "#3a87ad",
-            name: "",
-            showInLegend: true,
-            yValueFormatString: "#,##0",
-            dataPoints: []
-        }
-    ]
+    data: []
 };
 
 $(document).ready(function () {
     initAdminsSelectbox();
     initDatePicker();
-    fetchGraphsData('2018-01-01', '2018-12-31');
-});
 
-function fetchGraphsData(startDate, endDate) {
-    $.ajax({
-        url: '/processes/get?actaggregatorid=1&startdate=' + startDate + '&enddate=' + endDate,
-        success: (result) => {
-            graphOptions.title.text = 'Insolvências';
-            graphOptions.data[0].dataPoints = buildDataPoints(result);
-            graphOptions.data[0].name = 'Insolvências';
-            $("#processesChartContainer1").CanvasJSChart(graphOptions);
-        }
+    $('#search').on('click', () => {
+        const adminIds = $('#admins-select').val();
+        const graphData = adminIds.map((id) => {
+            return getAdminInsProcesses(id);
+        });
+
+        Promise.all(graphData)
+            .then((response) => {
+                graphOptions.title.text = 'Insolvências';
+
+                response.forEach((admData, i) => {
+                    const dataModel = {
+                        type: "line",
+                        color: "#3a87ad",
+                        name: "" + i,
+                        showInLegend: true,
+                        yValueFormatString: "#,##0",
+                        dataPoints: buildGraphLine(admData)
+                    };
+
+                    graphOptions.data.push(dataModel);
+                });
+
+                $("#processesChartContainer1").CanvasJSChart(graphOptions);
+            });
     });
-}
+});
 
 function initAdminsSelectbox() {
     $.ajax({
@@ -64,6 +69,20 @@ function initAdminsSelectbox() {
     });
 }
 
+function getAdminInsProcesses(id) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/processadmin/get-admin-ins-processes?id=' + id,
+            success: (results) => {
+                resolve(results);
+            },
+            error: (error) => {
+                reject(error);
+            }
+        });
+    });
+}
+
 function initDatePicker() {
     $('#date-range').daterangepicker(
         {
@@ -80,10 +99,43 @@ function initDatePicker() {
             }
         },
         function (start, end, label) {
-            fetchGraphsData(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+            //fetchGraphsData(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
         }
     );
 }
+
+function buildGraphLine(adminData) {
+    const datesList = enumerateDaysBetweenDates('2018-01-01', '2018-04-15');
+    let sum = 0;
+
+    return datesList.map((date) => {
+        const nextProcess = adminData[0];
+        const isCurrentDate = date === nextProcess.date.substr(0, 10);
+
+        if (isCurrentDate) {
+            sum += nextProcess.processes_nr;
+        }
+
+        return {
+            x: new Date(date),
+            y: sum
+        };
+    });
+}
+
+function enumerateDaysBetweenDates(startDate, endDate) {
+    startDate = moment(startDate);
+    endDate = moment(endDate);
+
+    const now = startDate;
+    const dates = [];
+
+    while (now.isBefore(endDate) || now.isSame(endDate)) {
+        dates.push(now.format('YYYY-MM-DD'));
+        now.add(1, 'days');
+    }
+    return dates;
+};
 
 function toggleDataSeries(e) {
     if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
@@ -92,13 +144,4 @@ function toggleDataSeries(e) {
         e.dataSeries.visible = true;
     }
     e.chart.render();
-}
-
-function buildDataPoints(result) {
-    return result.map((value) => {
-        return {
-            x: new Date(value.date),
-            y: value.count
-        };
-    });
 }
