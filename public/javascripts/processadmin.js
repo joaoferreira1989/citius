@@ -113,6 +113,7 @@ function buildGraphLine(adminData) {
         const isCurrentDate = date === nextProcess.date.substr(0, 10);
 
         if (isCurrentDate) {
+            adminData.shift();
             sum += nextProcess.processes_nr;
         }
 
