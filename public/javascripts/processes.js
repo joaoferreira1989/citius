@@ -90,7 +90,7 @@ function initDatePicker() {
             }
         },
         function (start, end, label) {
-            fetchGraphsData(start.format('DD-MM-YYYY'), end.format('DD-MM-YYYY'));
+            fetchGraphsData(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
         }
     );
 }
