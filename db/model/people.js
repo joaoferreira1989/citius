@@ -1,3 +1,6 @@
+const { DB_PEOPLE_TYPE_IDS } = require('../../lib/tools/constants');
+const { pool } = require('../db');
+
 function getPeopleIdByNif(connection, name, nif, peopleTypeId) {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM `people` WHERE `nif` = ?', [nif], (error, rows) => {
@@ -14,6 +17,22 @@ function getPeopleIdByNif(connection, name, nif, peopleTypeId) {
                         return reject(error);
                     });
             }
+        });
+    });
+}
+
+function getAllAdmIns(connection) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                `SELECT * FROM people WHERE people_type_id = ?`,
+                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA],
+                (error, rows) => {
+                    if (error) { return reject(error); }
+
+                    connection.release();
+                    resolve(rows);
+                });
         });
     });
 }
@@ -36,5 +55,6 @@ function addPeople(connection, _name, _nif, _peopleTypeId) {
 }
 
 module.exports = {
-    getPeopleIdByNif
+    getPeopleIdByNif,
+    getAllAdmIns
 };
