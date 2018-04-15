@@ -105,7 +105,7 @@ function initDatePicker() {
 }
 
 function buildGraphLine(adminData) {
-    const datesList = enumerateDaysBetweenDates('2018-01-01', '2018-04-15');
+    const datesList = enumerateDaysBetweenDates('2015-05-01', '2018-04-15');
     let sum = 0;
 
     return datesList.map((date) => {
