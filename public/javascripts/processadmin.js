@@ -109,8 +109,8 @@ function buildGraphLine(adminData) {
     let sum = 0;
 
     return datesList.map((date) => {
-        const nextProcess = adminData[0];
-        const isCurrentDate = date === nextProcess && nextProcess.date.substr(0, 10);
+        const nextProcess = adminData[0] || { date: '' };
+        const isCurrentDate = date === nextProcess.date.substr(0, 10);
 
         if (isCurrentDate) {
             adminData.shift();
