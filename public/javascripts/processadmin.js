@@ -1,22 +1,4 @@
-const graphOptions = {
-    animationEnabled: true,
-    theme: 'light2',
-    title: {
-        text: ''
-    },
-    axisX: {
-        valueFormatString: "DD-MMM-YY"
-    },
-    axisY: {},
-    toolTip: {
-        shared: true
-    },
-    legend: {
-        cursor: "pointer",
-        itemclick: toggleDataSeries
-    },
-    data: []
-};
+let adminsList = [];
 
 $(document).ready(function () {
     initAdminsSelectbox();
@@ -24,31 +6,74 @@ $(document).ready(function () {
 
     $('#search').on('click', () => {
         const adminIds = $('#admins-select').val();
-        const graphData = adminIds.map((id) => {
-            return getAdminInsProcesses(id);
-        });
 
-        Promise.all(graphData)
-            .then((response) => {
-                graphOptions.title.text = 'Insolvências';
-
-                response.forEach((admData, i) => {
-                    const dataModel = {
-                        type: "line",
-                        color: "#3a87ad",
-                        name: "" + i,
-                        showInLegend: true,
-                        yValueFormatString: "#,##0",
-                        dataPoints: buildGraphLine(admData)
-                    };
-
-                    graphOptions.data.push(dataModel);
-                });
-
-                $("#processesChartContainer1").CanvasJSChart(graphOptions);
+        loadGraphData(adminIds, 1, 'Insolvências')
+            .then((result1) => {
+                console.log('1', result1.data);
+                $("#processesChartContainer1").CanvasJSChart(result1);
+            });
+        loadGraphData(adminIds, 2, 'Substituições')
+            .then((result2) => {
+                console.log('2', result2.data);
+                $("#processesChartContainer2").CanvasJSChart(result2);
+            });
+        loadGraphData(adminIds, 3, 'PER-PEAP')
+            .then((result) => {
+                console.log('3', result.data);
+                $("#processesChartContainer3").CanvasJSChart(result);
+            });
+        loadGraphData(adminIds, 4, 'Insuficiência de Massa')
+            .then((result) => {
+                console.log('4', result.data);
+                $("#processesChartContainer4").CanvasJSChart(result);
             });
     });
 });
+
+function loadGraphData(adminIds, actAggId, title) {
+    const graphData = adminIds.map((id) => {
+        return getAdminInsProcesses(id, actAggId).then((data) => {
+            return { id, data };
+        });
+    });
+
+    return Promise.all(graphData)
+        .then((response) => {
+            const dataModel = response.map(({ id, data: admData }, i) => {
+                const adm = adminsList.find((adm) => {
+                    return adm.id === parseInt(id);
+                });
+
+                return {
+                    type: "line",
+                    name: adm && adm.text || '' + i,
+                    showInLegend: true,
+                    yValueFormatString: "#,##0",
+                    dataPoints: buildGraphLine(admData)
+                };
+            });
+
+            return {
+                animationEnabled: true,
+                theme: 'light2',
+                title: {
+                    text: title
+                },
+                axisX: {
+                    valueFormatString: "DD-MMM-YY"
+                },
+                axisY: {},
+                toolTip: {
+                    shared: true
+                },
+                legend: {
+                    cursor: "pointer",
+                    itemclick: toggleDataSeries
+                },
+                data: dataModel
+            };
+        });
+}
 
 function initAdminsSelectbox() {
     $.ajax({
@@ -60,6 +85,7 @@ function initAdminsSelectbox() {
                     text: admin.name
                 };
             });
+            adminsList = dataSource;
 
             $('#admins-select').select2({
                 multiple: true,
@@ -69,10 +95,10 @@ function initAdminsSelectbox() {
     });
 }
 
-function getAdminInsProcesses(id) {
+function getAdminInsProcesses(id, actAggId) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: '/processadmin/get-admin-ins-processes?id=' + id,
+            url: '/processadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId,
             success: (results) => {
                 resolve(results);
             },

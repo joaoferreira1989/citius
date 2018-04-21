@@ -15,12 +15,13 @@ router.get('/get-admins', function (req, res, next) {
 
 router.get('/get-admin-ins-processes', function (req, res, next) {
     const id = req.query.id;
+    const actAggId = req.query.actAggId;
 
-    if (!id) {
+    if (!id || !actAggId) {
         return res.send([]);
     }
 
-    fetchProcessesByAdminIns(id).then((processes) => {
+    fetchProcessesByAdminIns(id, actAggId).then((processes) => {
         return res.send(processes);
     });
 });
