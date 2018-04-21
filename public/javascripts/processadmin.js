@@ -6,31 +6,29 @@ $(document).ready(function () {
 
     $('#search').on('click', () => {
         const adminIds = $('#admins-select').val();
+        const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
+        const endDate = moment($('#date-range').data('daterangepicker').endDate._d).format('YYYY-MM-DD');
 
-        loadGraphData(adminIds, 1, 'Insolvências')
+        loadGraphData(adminIds, 1, startDate, endDate, 'Insolvências')
             .then((result1) => {
-                console.log('1', result1.data);
                 $("#processesChartContainer1").CanvasJSChart(result1);
             });
-        loadGraphData(adminIds, 2, 'Substituições')
+        loadGraphData(adminIds, 2, startDate, endDate, 'Substituições')
             .then((result2) => {
-                console.log('2', result2.data);
                 $("#processesChartContainer2").CanvasJSChart(result2);
             });
-        loadGraphData(adminIds, 3, 'PER-PEAP')
+        loadGraphData(adminIds, 3, startDate, endDate, 'PER-PEAP')
             .then((result) => {
-                console.log('3', result.data);
                 $("#processesChartContainer3").CanvasJSChart(result);
             });
-        loadGraphData(adminIds, 4, 'Insuficiência de Massa')
+        loadGraphData(adminIds, 4, startDate, endDate, 'Insuficiência de Massa')
             .then((result) => {
-                console.log('4', result.data);
                 $("#processesChartContainer4").CanvasJSChart(result);
             });
     });
 });
 
-function loadGraphData(adminIds, actAggId, title) {
+function loadGraphData(adminIds, actAggId, startDate, endDate, title) {
     const graphData = adminIds.map((id) => {
         return getAdminInsProcesses(id, actAggId).then((data) => {
             return { id, data };
@@ -49,7 +47,7 @@ function loadGraphData(adminIds, actAggId, title) {
                     name: adm && adm.text || '' + i,
                     showInLegend: true,
                     yValueFormatString: "#,##0",
-                    dataPoints: buildGraphLine(admData)
+                    dataPoints: buildGraphLine(admData, startDate, endDate)
                 };
             });
 
@@ -121,7 +119,8 @@ function initDatePicker() {
             ranges: {
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                 'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
             }
         },
         function (start, end, label) {
@@ -130,11 +129,11 @@ function initDatePicker() {
     );
 }
 
-function buildGraphLine(adminData) {
-    const datesList = enumerateDaysBetweenDates('2015-05-01', '2018-04-15');
+function buildGraphLine(adminData, startDate, endDate) {
+    const datesList = enumerateDaysBetweenDates('2015-05-01', endDate);
     let sum = 0;
 
-    return datesList.map((date) => {
+    const accumulatedData = datesList.map((date) => {
         const nextProcess = adminData[0] || { date: '' };
         const isCurrentDate = date === nextProcess.date.substr(0, 10);
 
@@ -147,6 +146,11 @@ function buildGraphLine(adminData) {
             x: new Date(date),
             y: sum
         };
+    });
+
+    const momentStartDate = moment(startDate);
+    return accumulatedData.filter((dayData) => {
+        return moment(dayData.x) >= momentStartDate;
     });
 }
 
