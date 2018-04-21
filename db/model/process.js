@@ -7,21 +7,28 @@ const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
-function fetchProcessesByAdminIns(adminInsId, actAggregatorId) {
+function fetchProcessesByAdminIns(adminInsId, actAggregatorId, courtIds) {
+    const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
     const query = `select count(process.number) as processes_nr, process.date as date from process
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
         where people.id = ?
         and process.act_aggregator_id = ?
+        ${courtFilter}
         group by process.date;`;
+
+    let filterValues = [adminInsId, actAggregatorId];
+    if (courtIds) { filterValues.push(courtIds); }
 
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
             connection.query(
                 query,
-                [adminInsId, actAggregatorId],
+                filterValues,
                 (error, rows) => {
-                    if (error) { return reject(error); }
+                    if (error) {
+                        return reject(error);
+                    }
 
                     connection.release();
                     resolve(rows);

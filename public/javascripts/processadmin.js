@@ -1,36 +1,39 @@
 let adminsList = [];
+let courtsList = [];
 
 $(document).ready(function () {
     initAdminsSelectbox();
+    initCourtsSelectbox();
     initDatePicker();
 
     $('#search').on('click', () => {
         const adminIds = $('#admins-select').val();
+        const courtIds = $('#courts-select').val();
         const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
         const endDate = moment($('#date-range').data('daterangepicker').endDate._d).format('YYYY-MM-DD');
 
-        loadGraphData(adminIds, 1, startDate, endDate, 'Insolvências')
+        loadGraphData(adminIds, courtIds, 1, startDate, endDate, 'Insolvências')
             .then((result1) => {
                 $("#processesChartContainer1").CanvasJSChart(result1);
             });
-        loadGraphData(adminIds, 2, startDate, endDate, 'Substituições')
+        loadGraphData(adminIds, courtIds, 2, startDate, endDate, 'Substituições')
             .then((result2) => {
                 $("#processesChartContainer2").CanvasJSChart(result2);
             });
-        loadGraphData(adminIds, 3, startDate, endDate, 'PER-PEAP')
+        loadGraphData(adminIds, courtIds, 3, startDate, endDate, 'PER-PEAP')
             .then((result) => {
                 $("#processesChartContainer3").CanvasJSChart(result);
             });
-        loadGraphData(adminIds, 4, startDate, endDate, 'Insuficiência de Massa')
+        loadGraphData(adminIds, courtIds, 4, startDate, endDate, 'Insuficiência de Massa')
             .then((result) => {
                 $("#processesChartContainer4").CanvasJSChart(result);
             });
     });
 });
 
-function loadGraphData(adminIds, actAggId, startDate, endDate, title) {
+function loadGraphData(adminIds, courtIds, actAggId, startDate, endDate, title) {
     const graphData = adminIds.map((id) => {
-        return getAdminInsProcesses(id, actAggId).then((data) => {
+        return getAdminInsProcesses(id, actAggId, courtIds).then((data) => {
             return { id, data };
         });
     });
@@ -86,6 +89,27 @@ function initAdminsSelectbox() {
             adminsList = dataSource;
 
             $('#admins-select').select2({
+                placeholder: 'Administradores de insolvência',
+                multiple: true,
+                data: dataSource
+            });
+        }
+    });
+}
+function initCourtsSelectbox() {
+    $.ajax({
+        url: '/processadmin/get-courts',
+        success: (results) => {
+            const dataSource = results.map((court) => {
+                return {
+                    id: court.id,
+                    text: court.name
+                };
+            });
+            courtsList = dataSource;
+
+            $('#courts-select').select2({
+                placeholder: 'Comarcas',
                 multiple: true,
                 data: dataSource
             });
@@ -93,10 +117,10 @@ function initAdminsSelectbox() {
     });
 }
 
-function getAdminInsProcesses(id, actAggId) {
+function getAdminInsProcesses(id, actAggId, courtIds) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: '/processadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId,
+            url: '/processadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId + '&courtIds=' + courtIds,
             success: (results) => {
                 resolve(results);
             },
