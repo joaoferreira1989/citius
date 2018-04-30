@@ -96,6 +96,7 @@ function initAdminsSelectbox() {
         }
     });
 }
+
 function initCourtsSelectbox() {
     $.ajax({
         url: '/processadmin/get-courts',

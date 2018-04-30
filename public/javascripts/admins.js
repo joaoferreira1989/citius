@@ -31,10 +31,10 @@ function initDatePicker() {
     );
 }
 
-const details1 = {};
-const details2 = {};
-const details3 = {};
-const details4 = {};
+let details1 = {};
+let details2 = {};
+let details3 = {};
+let details4 = {};
 
 function fetchTablesDate() {
     const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
@@ -61,19 +61,85 @@ function initTable(tableSelector, actaggregatorid, detailsObj, startDate, endDat
     $(tableSelector + ' tbody').off('click').on('click', 'tr', function () {
         const table = $(tableSelector).DataTable();
         const rowNif = table.row(this).data().nif;
+        const rowName = table.row(this).data().name;
 
         if ($(this).hasClass('selected')) {
-            delete detailsObj[rowNif];
-
             $(this).removeClass('selected');
+            delete detailsObj[rowNif];
+            renderProcesses(tableSelector + '-data', detailsObj);
         } else {
-            detailsObj[rowNif] = {
-                nif: rowNif
-            };
-
-            $(this).addClass('selected');
+            getAdminDetails(rowNif, actaggregatorid, startDate, endDate).then((result) => {
+                $(this).addClass('selected');
+                detailsObj[rowNif] = {
+                    nif: rowNif,
+                    name: rowName,
+                    processes: result
+                };
+                renderProcesses(tableSelector + '-data', detailsObj);
+            });
         }
+    });
 
-        console.log(detailsObj);
+    $(tableSelector + '-data').html('');
+    details1 = {};
+    details2 = {};
+    details3 = {};
+    details4 = {};
+}
+
+function renderProcesses(selector, data) {
+    const processMarkup = Object.keys(data).reduce((acc, nif) => {
+        const adminData = data[nif];
+        return acc + renderCard(adminData.name, adminData.nif, adminData.processes);
+    }, '');
+
+    $(selector).html(processMarkup);
+}
+
+function renderCard(name, nif, processesList) {
+    const cardProcesses = renderCardProcesses(processesList);
+    return `<div class="panel panel-default">
+        <div class="panel-heading">${name} - NIF: ${nif}</div>
+        ${cardProcesses}
+    </div>`;
+}
+
+function renderCardProcesses(processesList) {
+    const tBody = processesList.reduce((acc, process, index) => {
+        return acc +=
+            `<tr>
+                <th scope="row">${index + 1}</th>
+                <td>${process.process_number}</td>
+                <td>${process.court_name}</td>
+                <td>${process.judgement_name}</td>
+            </tr>`;
+    }, '');
+
+    return `<table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Número</th>
+                <th>Tribunal</th>
+                <th>Julgamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${tBody}
+        </tbody>
+    </table>`;
+}
+
+function getAdminDetails(nif, actAggId, startdate, enddate) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/admins/get-admin-details?nif=' + nif + '&actAggId=' + actAggId + '&startdate=' + startdate + '&enddate=' + enddate,
+            success: (results) => {
+                resolve(results);
+            },
+            error: (error) => {
+                reject(error);
+            }
+        });
     });
 }

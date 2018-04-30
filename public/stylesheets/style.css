@@ -50,4 +50,6 @@ table.selectable > tbody > tr.selected:nth-child(odd) > td {
 #table-3-data,
 #table-4-data {
   border: 2px dashed #ccc;
+  overflow-y: scroll;
+  height: 493px;
 }

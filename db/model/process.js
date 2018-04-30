@@ -7,6 +7,35 @@ const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
+function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate) {
+    const query = `select process.number as process_number, court.id as court_id, court.name as court_name, judgement.id as judgement_id, judgement.name as judgement_name from process
+        left join process_people on process.id = process_people.process_id
+        left join people on people.id = process_people.people_id
+        left join court on court.id = process.court_id
+        left join judgement on judgement.id = process.judgement_id
+        where people.people_type_id = ?
+        and people.nif = ?
+        and process.act_aggregator_id = ?
+        and process.date > ?
+        and process.date < ?;`;
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, nif, actAggregatorId, initialDate, finalDate],
+                (error, rows) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    connection.release();
+                    resolve(rows);
+                });
+        });
+    });
+}
+
 function fetchProcessesByAdminIns(adminInsId, actAggregatorId, courtIds) {
     const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
     const query = `select count(process.number) as processes_nr, process.date as date from process
@@ -246,5 +275,6 @@ module.exports = {
     insertProcess,
     getTopAdmIns,
     fetchProcessesTotal,
-    fetchProcessesByAdminIns
+    fetchProcessesByAdminIns,
+    fetchAdminProcesses
 };
