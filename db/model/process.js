@@ -66,6 +66,38 @@ function fetchProcessesByAdminIns(adminInsId, actAggregatorId, courtIds) {
     });
 }
 
+function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDate, finalDate, courtIds) {
+    const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
+    const query = `select count(process.number) as processes_nr, process.date as date from process
+        left join process_people on process.id = process_people.process_id
+        left join people on people.id = process_people.people_id
+        where people.id = ?
+        and process.act_aggregator_id = ?
+        and process.date > ?
+        and process.date < ?
+        ${courtFilter}
+        group by process.date;`;
+
+    let filterValues = [adminInsId, actAggregatorId, initialDate, finalDate];
+    if (courtIds) { filterValues.push(courtIds); }
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                filterValues,
+                (error, rows) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    connection.release();
+                    resolve(rows);
+                });
+        });
+    });
+}
+
 function fetchProcessesTotal(actAggregatorId = 1, initialDate, finalDate) {
     const query =
         `select count(process.number) as count, process.date as date from process
@@ -276,5 +308,6 @@ module.exports = {
     getTopAdmIns,
     fetchProcessesTotal,
     fetchProcessesByAdminIns,
-    fetchAdminProcesses
+    fetchAdminProcesses,
+    fetchProcessesByAdminInsAndDate
 };

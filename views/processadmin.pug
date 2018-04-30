@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  script(src='/javascripts/processadmin.js')
+
+  input#date-range
+  select#admins-select
+  select#courts-select
+  button#search.btn.btn-primary= 'Pesquisar'
+
+  div#processesChartContainer1(style="height: 300px; width: 100%;")
+  div#processesChartContainer2(style="height: 300px; width: 100%;")
+  div#processesChartContainer3(style="height: 300px; width: 100%;")
+  div#processesChartContainer4(style="height: 300px; width: 100%;")

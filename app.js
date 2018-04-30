@@ -11,6 +11,7 @@ var importer = require('./routes/importer');
 var admins = require('./routes/admins');
 var processes = require('./routes/processes');
 var accprocessadmin = require('./routes/accprocessadmin');
+var processadmin = require('./routes/processadmin');
 
 var app = express();
 
@@ -33,6 +34,7 @@ app.use('/importer', importer);
 app.use('/admins', admins);
 app.use('/processes', processes);
 app.use('/accprocessadmin', accprocessadmin);
+app.use('/processadmin', processadmin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
