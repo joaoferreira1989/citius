@@ -78,7 +78,7 @@ function loadGraphData(adminIds, courtIds, actAggId, startDate, endDate, title) 
 
 function initAdminsSelectbox() {
     $.ajax({
-        url: '/accprocessadmin/get-admins',
+        url: '/processadmin/get-admins',
         success: (results) => {
             const dataSource = results.map((admin) => {
                 return {
@@ -99,7 +99,7 @@ function initAdminsSelectbox() {
 
 function initCourtsSelectbox() {
     $.ajax({
-        url: '/accprocessadmin/get-courts',
+        url: '/processadmin/get-courts',
         success: (results) => {
             const dataSource = results.map((court) => {
                 return {
@@ -121,7 +121,7 @@ function initCourtsSelectbox() {
 function getAdminInsProcesses(id, actAggId, courtIds, startDate, endDate) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: '/accprocessadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId + '&courtIds=' + courtIds+ '&startdate=' + startDate + '&enddate=' + endDate,
+            url: '/processadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId + '&courtIds=' + courtIds+ '&startdate=' + startDate + '&enddate=' + endDate,
             success: (results) => {
                 resolve(results);
             },
