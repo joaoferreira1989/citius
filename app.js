@@ -10,7 +10,7 @@ var citius = require('./routes/citius');
 var importer = require('./routes/importer');
 var admins = require('./routes/admins');
 var processes = require('./routes/processes');
-var processadmin = require('./routes/processadmin');
+var accprocessadmin = require('./routes/accprocessadmin');
 
 var app = express();
 
@@ -32,7 +32,7 @@ app.use('/citius', citius);
 app.use('/importer', importer);
 app.use('/admins', admins);
 app.use('/processes', processes);
-app.use('/processadmin', processadmin);
+app.use('/accprocessadmin', accprocessadmin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

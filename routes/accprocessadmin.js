@@ -5,7 +5,7 @@ const { getAllCourts } = require('../db/model/court');
 const { fetchProcessesByAdminIns } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
-    res.render('processadmin');
+    res.render('accprocessadmin');
 });
 
 router.get('/get-admins', function (req, res, next) {
