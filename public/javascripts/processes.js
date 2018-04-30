@@ -30,6 +30,13 @@ const graphOptions = {
 $(document).ready(function () {
     initDatePicker();
     fetchGraphsData('2018-01-01', '2018-12-31');
+
+    $('#search').on('click', () => {
+        const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
+        const endDate = moment($('#date-range').data('daterangepicker').endDate._d).format('YYYY-MM-DD');
+
+        fetchGraphsData(startDate, endDate);
+    });
 });
 
 function fetchGraphsData(startDate, endDate) {
@@ -92,9 +99,7 @@ function initDatePicker() {
                 '2015': [moment('2015-01-01'), moment('2015-12-31')]
             }
         },
-        function (start, end, label) {
-            fetchGraphsData(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
-        }
+        function (start, end, label) {}
     );
 }
 
