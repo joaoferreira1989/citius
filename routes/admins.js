@@ -8,8 +8,10 @@ router.get('/', function (req, res, next) {
 
 router.get('/get-all', function (req, res, next) {
     const actaggregatorid = parseInt(req.query.actaggregatorid) || 1;
+    const initialDate = req.query.startdate;
+    const finalDate = req.query.enddate;
 
-    getTopAdmIns(actaggregatorid).then((topAdmins) => {
+    getTopAdmIns(actaggregatorid, initialDate, finalDate).then((topAdmins) => {
         return res.send({
             data: topAdmins
         });

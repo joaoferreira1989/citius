@@ -3,18 +3,29 @@ extends layout
 block content
   script(src='/javascripts/admins.js')
 
+  input#date-range
+  button#search.btn.btn-primary= 'Pesquisar'
+
   div.inso
     h3= 'Insolvências'
-    table#table-1.table.table-striped.table-bordered
+    div.table-wrapp
+      table#table-1.table.table-striped.selectable.table-bordered
+      div#table-1-data
 
   div.sub
     h3= 'Substituições'
-    table#table-2.table.table-striped.table-bordered
+    div.table-wrapp
+      table#table-2.table.table-striped.selectable.table-bordered
+      div#table-2-data
 
   div.per
     h3= 'PER-PEAP'
-    table#table-3.table.table-striped.table-bordered
+    div.table-wrapp
+      table#table-3.table.table-striped.selectable.table-bordered
+      div#table-3-data
 
   div.insu
     h3= 'Insuficiência de Massa'
-    table#table-4.table.table-striped.table-bordered
+    div.table-wrapp
+      table#table-4.table.table-striped.selectable.table-bordered
+      div#table-4-data

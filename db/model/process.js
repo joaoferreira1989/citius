@@ -63,13 +63,15 @@ function fetchProcessesTotal(actAggregatorId = 1, initialDate, finalDate) {
     });
 }
 
-function getTopAdmIns(actAggregatorId = 1) {
+function getTopAdmIns(actAggregatorId = 1, initialDate, finalDate) {
     const query =
         `select people.name, people.nif, count(process.id) as process_nr from process
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
         where people.people_type_id = ?
         and process.act_aggregator_id = ?
+        and process.date > ?
+        and process.date < ?
         group by people.id
         order by process_nr desc;`;
 
@@ -77,7 +79,7 @@ function getTopAdmIns(actAggregatorId = 1) {
         pool.getConnection((error, connection) => {
             connection.query(
                 query,
-                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, actAggregatorId],
+                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, actAggregatorId, initialDate, finalDate],
                 (error, rows) => {
                     if (error) { return reject(error); }
 

@@ -14,3 +14,40 @@ a {
 .select2.select2-container {
   width: 500px!important;
 }
+
+table.selectable tbody tr.selected {
+  background-color: #acbad4;
+}
+
+table.selectable > tbody > tr.selected:nth-child(odd) > td {
+  background-color: initial;
+}
+
+.table-wrapp {
+  display: flex;
+}
+
+.table-wrapp > div {
+ flex: 0 0 50%;
+}
+
+#table-1_wrapper .col-sm-5,
+#table-2_wrapper .col-sm-5,
+#table-3_wrapper .col-sm-5,
+#table-4_wrapper .col-sm-5 {
+  width: 35%;
+}
+
+#table-1_wrapper .col-sm-7,
+#table-2_wrapper .col-sm-7,
+#table-3_wrapper .col-sm-7,
+#table-4_wrapper .col-sm-7 {
+  width: 65%;
+}
+
+#table-1-data,
+#table-2-data,
+#table-3-data,
+#table-4-data {
+  border: 2px dashed #ccc;
+}
