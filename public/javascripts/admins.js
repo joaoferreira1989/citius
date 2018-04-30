@@ -110,6 +110,7 @@ function renderCardProcesses(processesList) {
             `<tr>
                 <th scope="row">${index + 1}</th>
                 <td>${process.process_number}</td>
+                <td>${process.process_date.substr(0, 10)}</td>
                 <td>${process.court_name}</td>
                 <td>${process.judgement_name}</td>
             </tr>`;
@@ -120,8 +121,9 @@ function renderCardProcesses(processesList) {
             <tr>
                 <th>#</th>
                 <th>Número</th>
+                <th>Data</th>
                 <th>Tribunal</th>
-                <th>Julgamento</th>
+                <th>Juízo</th>
             </tr>
         </thead>
         <tbody>

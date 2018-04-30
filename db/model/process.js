@@ -8,7 +8,7 @@ const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
 function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate) {
-    const query = `select process.number as process_number, court.id as court_id, court.name as court_name, judgement.id as judgement_id, judgement.name as judgement_name from process
+    const query = `select process.number as process_number, process.date as process_date, court.id as court_id, court.name as court_name, judgement.id as judgement_id, judgement.name as judgement_name from process
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
         left join court on court.id = process.court_id
