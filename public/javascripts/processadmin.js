@@ -145,7 +145,9 @@ function initDatePicker() {
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                 'This Month': [moment().startOf('month'), moment().endOf('month')],
                 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                '2016': [moment('2016-01-01'), moment('2016-12-31')],
+                '2015': [moment('2015-01-01'), moment('2015-12-31')]
             }
         },
         function (start, end, label) {}

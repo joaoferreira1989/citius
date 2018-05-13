@@ -16,8 +16,8 @@ function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate) {
         where people.people_type_id = ?
         and people.nif = ?
         and process.act_aggregator_id = ?
-        and process.date > ?
-        and process.date < ?;`;
+        and process.date >= ?
+        and process.date <= ?;`;
 
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
@@ -73,8 +73,8 @@ function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDat
         left join people on people.id = process_people.people_id
         where people.id = ?
         and process.act_aggregator_id = ?
-        and process.date > ?
-        and process.date < ?
+        and process.date >= ?
+        and process.date <= ?
         ${courtFilter}
         group by process.date;`;
 
@@ -98,6 +98,34 @@ function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDat
     });
 }
 
+function fetchExcelProcesses(initialDate, finalDate, actAggrId = 1) {
+    const query =
+        `select process.number as process_nr, process.date as process_date, act.name as act_name, court.name as court_name, judgement.name as judgement_name, people.name as admin_name, people.nif as people_nif from process
+            join act on act.id = process.act_id
+            join court on court.id = process.court_id
+            join judgement on judgement.id = process.judgement_id
+            left join process_people on process.id = process_people.process_id
+            left join people on people.id = process_people.people_id
+            where people.people_type_id = ?
+            and act_aggregator_id = ?
+            and date >= ?
+            and date <= ?;`;
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, actAggrId, initialDate, finalDate],
+                (error, rows) => {
+                    if (error) { return reject(error); }
+
+                    connection.release();
+                    resolve(rows);
+                });
+        });
+    });
+}
+
 function fetchProcessesTotal(actAggregatorId = 1, initialDate, finalDate) {
     const query =
         `select count(process.number) as count, process.date as date from process
@@ -105,8 +133,8 @@ function fetchProcessesTotal(actAggregatorId = 1, initialDate, finalDate) {
             left join people on people.id = process_people.people_id
             where people.people_type_id = ?
             and process.act_aggregator_id = ?
-            and process.date > ?
-            and process.date < ?
+            and process.date >= ?
+            and process.date <= ?
             group by process.date;`;
 
     return new Promise((resolve, reject) => {
@@ -131,8 +159,8 @@ function getTopAdmIns(actAggregatorId = 1, initialDate, finalDate) {
         left join people on people.id = process_people.people_id
         where people.people_type_id = ?
         and process.act_aggregator_id = ?
-        and process.date > ?
-        and process.date < ?
+        and process.date >= ?
+        and process.date <= ?
         group by people.id
         order by process_nr desc;`;
 
@@ -309,5 +337,6 @@ module.exports = {
     fetchProcessesTotal,
     fetchProcessesByAdminIns,
     fetchAdminProcesses,
-    fetchProcessesByAdminInsAndDate
+    fetchProcessesByAdminInsAndDate,
+    fetchExcelProcesses
 };

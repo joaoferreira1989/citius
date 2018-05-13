@@ -1,49 +1,44 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const { PEOPLE_TYPES } = require('../lib/tools/constants');
-const { doFetch } = require('../lib/req/citius');
 const { exportToExcel } = require('../lib/exporter/csv');
+const { fetchExcelProcesses } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
     const initialDate = req.query.startdate;
     const finalDate = req.query.enddate;
-    const actsList = [
-        'Pub. - Sentença Declaração Insolvência',
-        'Pub. - Destituição / Nomeação Administrador',
-        'Pub. - Nomeação Administrador Provisório'
-    ];
 
-    doFetch(initialDate, finalDate, actsList).then((response) => {
-        const csvData = response.map((act) => {
-            return act.map(({ process, people }) => {
-                const admins = people.reduce((acc, person) => {
-                    if (person.type === PEOPLE_TYPES.ADMINISTRADOR_INSOLVENCIA) {
-                        acc.push(person);
-                    }
+    const processesActAggr1 = fetchExcelProcesses(initialDate, finalDate, 1);
+    const processesActAggr2 = fetchExcelProcesses(initialDate, finalDate, 2);
+    const processesActAggr3 = fetchExcelProcesses(initialDate, finalDate, 3);
 
-                    return acc;
-                }, []) || [];
+    return Promise.all([processesActAggr1, processesActAggr2, processesActAggr3])
+        .then((response) => {
+            const csvData = response.map((act) => {
+                return act.map((process) => {
+                    const judgementSplit = process.judgement_name.split(' ');
+                    const judgementNr = judgementSplit[judgementSplit.length - 1];
 
-                return {
-                    processNumber: process.processDetails.number,
-                    date: process.date,
-                    act: process.act,
-                    court: process.court,
-                    judgement: process.processDetails.judgement,
-                    admin1: admins[0] ? admins[0].name : undefined,
-                    admin1Nif: admins[0] ? admins[0].nif : undefined,
-                    admin2: admins[1] ? admins[1].name : undefined,
-                    admin2Nif: admins[1] ? admins[1].nif : undefined
-                };
+                    return {
+                        processNumber: process.process_nr,
+                        date: moment(process.process_date).format('DD-MM-YYYY'),
+                        act: process.act_name,
+                        court: process.court_name,
+                        judgement: /^[0-9]+$/.test(judgementNr) ? judgementNr : '',
+                        admin1: process.admin_name,
+                        admin1Nif: process.people_nif
+                    };
+                });
             });
-        });
-        const date = new Date();
-        const timestamp = date.getTime();
-        const report = exportToExcel(csvData);
 
-        res.attachment('report' + timestamp + '.xlsx');
-        return res.send(report);
-    });
+            const date = new Date();
+            const timestamp = date.getTime();
+            const report = exportToExcel(csvData);
+
+            res.attachment('report' + timestamp + '.xlsx');
+            return res.send(report);
+        });
 });
 
 module.exports = router;
