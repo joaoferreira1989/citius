@@ -53,3 +53,7 @@ table.selectable > tbody > tr.selected:nth-child(odd) > td {
   overflow-y: scroll;
   height: 493px;
 }
+
+.daterangepicker_input {
+  display: none;
+}
