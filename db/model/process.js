@@ -75,8 +75,10 @@ function fetchProcessesByAdminIns(adminInsId, actAggregatorId, courtIds) {
     });
 }
 
-function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDate, finalDate, courtIds) {
+function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDate, finalDate, courtIds, judgementIds) {
     const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
+    const judgementFilter = judgementIds ? 'and process.judgement_id in (?)' : '';
+
     const query = `select count(process.number) as processes_nr, process.date as date from process
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
@@ -85,10 +87,12 @@ function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDat
         and process.date >= ?
         and process.date <= ?
         ${courtFilter}
+        ${judgementFilter}
         group by process.date;`;
 
     let filterValues = [adminInsId, actAggregatorId, initialDate, finalDate];
     if (courtIds) { filterValues.push(courtIds); }
+    if (judgementIds) { filterValues.push(judgementIds); }
 
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {

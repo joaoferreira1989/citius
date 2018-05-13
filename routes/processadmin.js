@@ -26,12 +26,13 @@ router.get('/get-admin-ins-processes', function (req, res, next) {
     const initialDate = req.query.startdate;
     const finalDate = req.query.enddate;
     const courtIds = req.query.courtIds && req.query.courtIds.split(',');
+    const judgementIds = req.query.judgementids && req.query.judgementids.split(',');
 
     if (!id || !actAggId) {
         return res.send([]);
     }
 
-    fetchProcessesByAdminInsAndDate(id, actAggId, initialDate, finalDate, courtIds).then((processes) => {
+    fetchProcessesByAdminInsAndDate(id, actAggId, initialDate, finalDate, courtIds, judgementIds).then((processes) => {
         return res.send(processes);
     });
 });

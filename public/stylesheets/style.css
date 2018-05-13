@@ -9,10 +9,20 @@ a {
 
 #date-range {
   width: 170px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  line-height: 31px;
+  padding: 0 0 0 4px;
+}
+
+#export,
+#search,
+.select2-container {
+  margin-left: 5px!important;
 }
 
 .select2.select2-container {
-  width: 500px!important;
+  width: 335px!important;
 }
 
 table.selectable tbody tr.selected {
