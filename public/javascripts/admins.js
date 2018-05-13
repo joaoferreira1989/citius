@@ -89,16 +89,19 @@ function fetchTablesDate() {
     const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
     const endDate = moment($('#date-range').data('daterangepicker').endDate._d).format('YYYY-MM-DD');
 
-    initTable('#table-1', 1, details1, startDate, endDate);
-    initTable('#table-2', 2, details2, startDate, endDate);
-    initTable('#table-3', 3, details3, startDate, endDate);
-    initTable('#table-4', 4, details4, startDate, endDate);
+    const courtIds = $('#courts-select').val();
+    const judgementIds = $('#judgements-select').val();
+
+    initTable('#table-1', 1, details1, startDate, endDate, courtIds, judgementIds);
+    initTable('#table-2', 2, details2, startDate, endDate, courtIds, judgementIds);
+    initTable('#table-3', 3, details3, startDate, endDate, courtIds, judgementIds);
+    initTable('#table-4', 4, details4, startDate, endDate, courtIds, judgementIds);
 }
 
-function initTable(tableSelector, actaggregatorid, detailsObj, startDate, endDate) {
+function initTable(tableSelector, actaggregatorid, detailsObj, startDate, endDate, courtIds, judgementIds) {
     $(tableSelector).DataTable({
         destroy: true,
-        ajax: '/admins/get-all?actaggregatorid=' + actaggregatorid + '&startdate=' + startDate + '&enddate=' + endDate,
+        ajax: '/admins/get-all?actaggregatorid=' + actaggregatorid + '&startdate=' + startDate + '&enddate=' + endDate + '&courtids=' + courtIds + '&judgementids=' + judgementIds,
         columns: [
             { title: 'Name', data: 'name' },
             { title: 'NIF', data: 'nif' },
@@ -117,7 +120,7 @@ function initTable(tableSelector, actaggregatorid, detailsObj, startDate, endDat
             delete detailsObj[rowNif];
             renderProcesses(tableSelector + '-data', detailsObj);
         } else {
-            getAdminDetails(rowNif, actaggregatorid, startDate, endDate).then((result) => {
+            getAdminDetails(rowNif, actaggregatorid, startDate, endDate, courtIds, judgementIds).then((result) => {
                 $(this).addClass('selected');
                 detailsObj[rowNif] = {
                     nif: rowNif,
@@ -181,10 +184,10 @@ function renderCardProcesses(processesList) {
     </table>`;
 }
 
-function getAdminDetails(nif, actAggId, startdate, enddate) {
+function getAdminDetails(nif, actAggId, startdate, enddate, courtIds, judgementIds) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: '/admins/get-admin-details?nif=' + nif + '&actAggId=' + actAggId + '&startdate=' + startdate + '&enddate=' + enddate,
+            url: '/admins/get-admin-details?nif=' + nif + '&actAggId=' + actAggId + '&startdate=' + startdate + '&enddate=' + enddate + '&courtids=' + courtIds + '&judgementids=' + judgementIds,
             success: (results) => {
                 resolve(results);
             },

@@ -7,7 +7,10 @@ const { getPeopleIdByNif } = require('../model/people');
 const { addProcessPeople } = require('../model/process-people');
 const { DB_PEOPLE_TYPE_IDS, ACT_ID_AGGREGATORS_MAP } = require('../../lib/tools/constants');
 
-function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate) {
+function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate, courtIds, judgementIds) {
+    const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
+    const judgementFilter = judgementIds ? 'and process.judgement_id in (?)' : '';
+
     const query = `select process.number as process_number, process.date as process_date, court.id as court_id, court.name as court_name, judgement.id as judgement_id, judgement.name as judgement_name from process
         left join process_people on process.id = process_people.process_id
         left join people on people.id = process_people.people_id
@@ -17,13 +20,19 @@ function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate) {
         and people.nif = ?
         and process.act_aggregator_id = ?
         and process.date >= ?
-        and process.date <= ?;`;
+        and process.date <= ?
+        ${courtFilter}
+        ${judgementFilter};`;
+
+    let filterValues = [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, nif, actAggregatorId, initialDate, finalDate];
+    if (courtIds) { filterValues.push(courtIds); }
+    if (judgementIds) { filterValues.push(judgementIds); }
 
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
             connection.query(
                 query,
-                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, nif, actAggregatorId, initialDate, finalDate],
+                filterValues,
                 (error, rows) => {
                     if (error) {
                         return reject(error);
@@ -152,7 +161,10 @@ function fetchProcessesTotal(actAggregatorId = 1, initialDate, finalDate) {
     });
 }
 
-function getTopAdmIns(actAggregatorId = 1, initialDate, finalDate) {
+function getTopAdmIns(actAggregatorId = 1, initialDate, finalDate, courtIds, judgementIds) {
+    const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
+    const judgementFilter = judgementIds ? 'and process.judgement_id in (?)' : '';
+
     const query =
         `select people.name, people.nif, count(process.id) as process_nr from process
         left join process_people on process.id = process_people.process_id
@@ -161,14 +173,20 @@ function getTopAdmIns(actAggregatorId = 1, initialDate, finalDate) {
         and process.act_aggregator_id = ?
         and process.date >= ?
         and process.date <= ?
+        ${courtFilter}
+        ${judgementFilter}
         group by people.id
         order by process_nr desc;`;
+
+    let filterValues = [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, actAggregatorId, initialDate, finalDate];
+    if (courtIds) { filterValues.push(courtIds); }
+    if (judgementIds) { filterValues.push(judgementIds); }
 
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
             connection.query(
                 query,
-                [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, actAggregatorId, initialDate, finalDate],
+                filterValues,
                 (error, rows) => {
                     if (error) { return reject(error); }
 
