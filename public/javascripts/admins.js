@@ -1,9 +1,14 @@
+let courtsList = [];
+let judgementsList = [];
+
 $(document).ready(function () {
     $.fn.dataTable.ext.errMode = function (_, __, error) {
         console.error(error);
     };
 
     initDatePicker();
+    initCourtsSelectbox();
+    initJudgementsSelectbox();
     fetchTablesDate();
 
     $('#search').on('click', () => {
@@ -31,6 +36,48 @@ function initDatePicker() {
         },
         function (start, end, label) { }
     );
+}
+
+function initCourtsSelectbox() {
+    $.ajax({
+        url: '/accprocessadmin/get-courts',
+        success: (results) => {
+            const dataSource = results.map((court) => {
+                return {
+                    id: court.id,
+                    text: court.name
+                };
+            });
+            courtsList = dataSource;
+
+            $('#courts-select').select2({
+                placeholder: 'Comarcas',
+                multiple: true,
+                data: dataSource
+            });
+        }
+    });
+}
+
+function initJudgementsSelectbox() {
+    $.ajax({
+        url: '/accprocessadmin/get-judgements',
+        success: (results) => {
+            const dataSource = results.map((court) => {
+                return {
+                    id: court.id,
+                    text: court.name
+                };
+            });
+            judgementsList = dataSource;
+
+            $('#judgements-select').select2({
+                placeholder: 'Juizos',
+                multiple: true,
+                data: dataSource
+            });
+        }
+    });
 }
 
 let details1 = {};

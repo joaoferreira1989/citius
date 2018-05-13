@@ -30,7 +30,7 @@ function addCourt(connection, nameValue) {
     });
 }
 
-function getAllCourts(connection) {
+function getAllCourts() {
     return new Promise((resolve, reject) => {
         pool.getConnection((error, connection) => {
             connection.query(

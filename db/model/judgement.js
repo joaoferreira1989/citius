@@ -1,3 +1,5 @@
+const { pool } = require('../db');
+
 function getJudgementIdByName(connection, name, courtId) {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM `judgement` WHERE `name` = ?', [name], (error, rows) => {
@@ -35,6 +37,23 @@ function addJudgement(connection, nameValue, courtIdValue) {
     });
 }
 
+function getAllJudgements() {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                `SELECT * FROM judgement`,
+                [],
+                (error, rows) => {
+                    if (error) { return reject(error); }
+
+                    connection.release();
+                    resolve(rows);
+                });
+        });
+    });
+}
+
 module.exports = {
-    getJudgementIdByName
+    getJudgementIdByName,
+    getAllJudgements
 };

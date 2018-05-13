@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllAdmIns } = require('../db/model/people');
 const { getAllCourts } = require('../db/model/court');
+const { getAllJudgements } = require('../db/model/judgement');
 const { fetchProcessesByAdminIns } = require('../db/model/process');
 
 router.get('/', function (req, res, next) {
@@ -16,6 +17,12 @@ router.get('/get-admins', function (req, res, next) {
 
 router.get('/get-courts', function (req, res, next) {
     getAllCourts().then((admins) => {
+        return res.send(admins);
+    });
+});
+
+router.get('/get-judgements', function (req, res, next) {
+    getAllJudgements().then((admins) => {
         return res.send(admins);
     });
 });
