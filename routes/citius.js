@@ -12,8 +12,9 @@ router.get('/', function (req, res, next) {
     const processesActAggr1 = fetchExcelProcesses(initialDate, finalDate, 1);
     const processesActAggr2 = fetchExcelProcesses(initialDate, finalDate, 2);
     const processesActAggr3 = fetchExcelProcesses(initialDate, finalDate, 3);
+    const processesActAggr4 = fetchExcelProcesses(initialDate, finalDate, 4);
 
-    return Promise.all([processesActAggr1, processesActAggr2, processesActAggr3])
+    return Promise.all([processesActAggr1, processesActAggr2, processesActAggr3, processesActAggr4])
         .then((response) => {
             const csvData = response.map((act) => {
                 return act.map((process) => {
