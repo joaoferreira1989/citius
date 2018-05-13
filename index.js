@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 var app = require('./app');
 var debug = require('debug')('citius:server');
