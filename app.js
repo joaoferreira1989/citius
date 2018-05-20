@@ -12,8 +12,13 @@ var admins = require('./routes/admins');
 var processes = require('./routes/processes');
 var accprocessadmin = require('./routes/accprocessadmin');
 var processadmin = require('./routes/processadmin');
+const { startDailyCron, startWeeklyCron } = require('./routes/cron');
 
 var app = express();
+
+// start cron jobs
+startDailyCron();
+startWeeklyCron();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
