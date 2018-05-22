@@ -80,13 +80,13 @@ router.get('/', function (req, res, next) {
         millisecond: '000'
     });
 
-    /*doFetch(initialDate, finalDate, actsList).then((actList) => {
+    doFetch(initialDate, finalDate, actsList).then((actList) => {
         actList.forEach((processList) => {
             insertProcesses(processList);
         });
 
         return res.send('done');
-    });*/
+    });
 });
 
 router.get('/inso/', function (req, res, next) {

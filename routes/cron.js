@@ -1,18 +1,87 @@
 const cron = require('node-cron');
+const rp = require('request-promise');
 
-function startDailyCron() {
-    cron.schedule('10 19 * * *', function () {
-        console.log('diariamente as 19:10');
+// Every day at 20:10
+function startDailyCron1() {
+    cron.schedule('10 20 * * *', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=inso&range=daily'
+        });
     });
 }
 
-function startWeeklyCron() {
-    cron.schedule('10 21 * * 0-7', function () {
-        console.log('semanalmente as 21:10');
+function startDailyCron2() {
+    cron.schedule('12 20 * * *', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=sub&range=daily'
+        });
+    });
+}
+
+function startDailyCron3() {
+    cron.schedule('14 20 * * *', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=per&range=daily'
+        });
+    });
+}
+
+function startDailyCron4() {
+    cron.schedule('16 20 * * *', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=insu&range=daily'
+        });
+    });
+}
+
+// Every Sunday at 08:10
+function startWeeklyCron1() {
+    cron.schedule('10 8 * * 0', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=inso&range=weekly'
+        });
+    });
+}
+
+function startWeeklyCron2() {
+    cron.schedule('20 8 * * 0', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=sub&range=weekly'
+        });
+    });
+}
+
+function startWeeklyCron3() {
+    cron.schedule('30 8 * * 0', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=per&range=weekly'
+        });
+    });
+}
+
+function startWeeklyCron4() {
+    cron.schedule('40 8 * * 0', function () {
+        return rp({
+            method: 'GET',
+            url: 'http://localhost:3000/importer?aggr=insu&range=weekly'
+        });
     });
 }
 
 module.exports = {
-    startDailyCron,
-    startWeeklyCron
+    startDailyCron1,
+    startDailyCron2,
+    startDailyCron3,
+    startDailyCron4,
+    startWeeklyCron1,
+    startWeeklyCron2,
+    startWeeklyCron3,
+    startWeeklyCron4
 };
