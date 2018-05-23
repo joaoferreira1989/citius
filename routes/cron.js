@@ -3,7 +3,7 @@ const rp = require('request-promise');
 
 // Every day at 20:40
 function startDailyCron1() {
-    cron.schedule('13 20 * * *', function () {
+    cron.schedule('18 * * * *', function () {
 console.log('schedule1');
         return rp({
             method: 'GET',
@@ -13,7 +13,7 @@ console.log('schedule1');
 }
 
 function startDailyCron2() {
-    cron.schedule('14 20 * * *', function () {
+    cron.schedule('19 * * * *', function () {
 console.log('schedule2');
         return rp({
             method: 'GET',
@@ -23,7 +23,7 @@ console.log('schedule2');
 }
 
 function startDailyCron3() {
-    cron.schedule('15 20 * * *', function () {
+    cron.schedule('20 * * * *', function () {
         console.log('schedule3');
         return rp({
             method: 'GET',
@@ -33,7 +33,7 @@ function startDailyCron3() {
 }
 
 function startDailyCron4() {
-    cron.schedule('16 20 * * *', function () {
+    cron.schedule('21 * * * *', function () {
         console.log('schedule4');
         return rp({
             method: 'GET',
