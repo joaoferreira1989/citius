@@ -3,18 +3,16 @@ const rp = require('request-promise');
 
 // Every day at 20:40
 function startDailyCron1() {
-    cron.schedule('18 * * * *', function () {
-console.log('schedule1');
+    cron.schedule('24 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://127.0.0.1:3000/importer?aggr=inso&range=daily'
+            url: 'http://80.211.173.129:3000/importer?aggr=inso&range=daily'
         });
     });
 }
 
 function startDailyCron2() {
-    cron.schedule('19 * * * *', function () {
-console.log('schedule2');
+    cron.schedule('26 20 * * *', function () {
         return rp({
             method: 'GET',
             url: 'http://80.211.173.129:3000/importer?aggr=sub&range=daily'
@@ -23,21 +21,19 @@ console.log('schedule2');
 }
 
 function startDailyCron3() {
-    cron.schedule('20 * * * *', function () {
-        console.log('schedule3');
+    cron.schedule('28 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=per&range=daily'
+            url: 'http://80.211.173.129:3000/importer?aggr=per&range=daily'
         });
     });
 }
 
 function startDailyCron4() {
-    cron.schedule('21 * * * *', function () {
-        console.log('schedule4');
+    cron.schedule('30 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=insu&range=daily'
+            url: 'http://80.211.173.129:3000/importer?aggr=insu&range=daily'
         });
     });
 }
@@ -47,7 +43,7 @@ function startWeeklyCron1() {
     cron.schedule('10 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=inso&range=weekly'
+            url: 'http://80.211.173.129:3000/importer?aggr=inso&range=weekly'
         });
     });
 }
@@ -56,7 +52,7 @@ function startWeeklyCron2() {
     cron.schedule('20 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=sub&range=weekly'
+            url: 'http://80.211.173.129:3000/importer?aggr=sub&range=weekly'
         });
     });
 }
@@ -65,7 +61,7 @@ function startWeeklyCron3() {
     cron.schedule('30 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=per&range=weekly'
+            url: 'http://80.211.173.129:3000/importer?aggr=per&range=weekly'
         });
     });
 }
@@ -74,7 +70,7 @@ function startWeeklyCron4() {
     cron.schedule('40 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=insu&range=weekly'
+            url: 'http://80.211.173.129:3000/importer?aggr=insu&range=weekly'
         });
     });
 }
