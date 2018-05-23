@@ -3,7 +3,7 @@ const rp = require('request-promise');
 
 // Every day at 20:40
 function startDailyCron1() {
-    cron.schedule('40 20 * * *', function () {
+    cron.schedule('50 21 * * *', function () {
         return rp({
             method: 'GET',
             url: 'http://localhost:3000/importer?aggr=inso&range=daily'
@@ -12,7 +12,7 @@ function startDailyCron1() {
 }
 
 function startDailyCron2() {
-    cron.schedule('42 20 * * *', function () {
+    cron.schedule('52 21 * * *', function () {
         return rp({
             method: 'GET',
             url: 'http://localhost:3000/importer?aggr=sub&range=daily'
@@ -21,7 +21,7 @@ function startDailyCron2() {
 }
 
 function startDailyCron3() {
-    cron.schedule('44 20 * * *', function () {
+    cron.schedule('54 21 * * *', function () {
         return rp({
             method: 'GET',
             url: 'http://localhost:3000/importer?aggr=per&range=daily'
@@ -30,7 +30,7 @@ function startDailyCron3() {
 }
 
 function startDailyCron4() {
-    cron.schedule('46 20 * * *', function () {
+    cron.schedule('56 21 * * *', function () {
         return rp({
             method: 'GET',
             url: 'http://localhost:3000/importer?aggr=insu&range=daily'
