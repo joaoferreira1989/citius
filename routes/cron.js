@@ -3,19 +3,21 @@ const rp = require('request-promise');
 
 // Every day at 20:40
 function startDailyCron1() {
-    cron.schedule('50 21 * * *', function () {
+    cron.schedule('2 21 * * *', function () {
+console.log('schedule1');
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=inso&range=daily'
+            url: 'http://127.0.0.1:3000/importer?aggr=inso&range=daily'
         });
     });
 }
 
 function startDailyCron2() {
-    cron.schedule('52 21 * * *', function () {
+    cron.schedule('03 21 * * *', function () {
+console.log('schedule2');
         return rp({
             method: 'GET',
-            url: 'http://localhost:3000/importer?aggr=sub&range=daily'
+            url: 'http://80.211.173.129:3000/importer?aggr=sub&range=daily'
         });
     });
 }
