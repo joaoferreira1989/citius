@@ -115,7 +115,7 @@ function toggleDataSeries(e) {
 function buildDataPoints(result) {
     return result.map((value) => {
         return {
-            x: new Date(value.date),
+            x: moment(value.date).add(3, 'hours').toDate(),
             y: value.count
         };
     });
