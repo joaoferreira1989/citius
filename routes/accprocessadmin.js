@@ -31,12 +31,13 @@ router.get('/get-admin-ins-processes', function (req, res, next) {
     const id = req.query.id;
     const actAggId = req.query.actAggId;
     const courtIds = req.query.courtIds && req.query.courtIds.split(',');
+    const judgementIds = req.query.judgementids && req.query.judgementids.split(',');
 
     if (!id || !actAggId) {
         return res.send([]);
     }
 
-    fetchProcessesByAdminIns(id, actAggId, courtIds).then((processes) => {
+    fetchProcessesByAdminIns(id, actAggId, courtIds, judgementIds).then((processes) => {
         return res.send(processes);
     });
 });

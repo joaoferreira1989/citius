@@ -4,36 +4,38 @@ let courtsList = [];
 $(document).ready(function () {
     initAdminsSelectbox();
     initCourtsSelectbox();
+    initJudgementsSelectbox();
     initDatePicker();
 
     $('#search').on('click', () => {
         const adminIds = $('#admins-select').val();
         const courtIds = $('#courts-select').val();
+        const judgementIds = $('#judgements-select').val();
         const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
         const endDate = moment($('#date-range').data('daterangepicker').endDate._d).format('YYYY-MM-DD');
 
-        loadGraphData(adminIds, courtIds, 1, startDate, endDate, 'Insolvências')
+        loadGraphData(adminIds, courtIds, judgementIds, 1, startDate, endDate, 'Insolvências')
             .then((result1) => {
                 $("#processesChartContainer1").CanvasJSChart(result1);
             });
-        loadGraphData(adminIds, courtIds, 2, startDate, endDate, 'Substituições')
+        loadGraphData(adminIds, courtIds, judgementIds, 2, startDate, endDate, 'Substituições')
             .then((result2) => {
                 $("#processesChartContainer2").CanvasJSChart(result2);
             });
-        loadGraphData(adminIds, courtIds, 3, startDate, endDate, 'PER-PEAP')
+        loadGraphData(adminIds, courtIds, judgementIds, 3, startDate, endDate, 'PER-PEAP')
             .then((result) => {
                 $("#processesChartContainer3").CanvasJSChart(result);
             });
-        loadGraphData(adminIds, courtIds, 4, startDate, endDate, 'Insuficiência de Massa')
+        loadGraphData(adminIds, courtIds, judgementIds, 4, startDate, endDate, 'Insuficiência de Massa')
             .then((result) => {
                 $("#processesChartContainer4").CanvasJSChart(result);
             });
     });
 });
 
-function loadGraphData(adminIds, courtIds, actAggId, startDate, endDate, title) {
+function loadGraphData(adminIds, courtIds, judgementIds, actAggId, startDate, endDate, title) {
     const graphData = adminIds.map((id) => {
-        return getAdminInsProcesses(id, actAggId, courtIds).then((data) => {
+        return getAdminInsProcesses(id, actAggId, courtIds, judgementIds).then((data) => {
             return { id, data };
         });
     });
@@ -118,10 +120,31 @@ function initCourtsSelectbox() {
     });
 }
 
-function getAdminInsProcesses(id, actAggId, courtIds) {
+function initJudgementsSelectbox() {
+    $.ajax({
+        url: '/accprocessadmin/get-judgements',
+        success: (results) => {
+            const dataSource = results.map((court) => {
+                return {
+                    id: court.id,
+                    text: court.name
+                };
+            });
+            judgementsList = dataSource;
+
+            $('#judgements-select').select2({
+                placeholder: 'Juizos',
+                multiple: true,
+                data: dataSource
+            });
+        }
+    });
+}
+
+function getAdminInsProcesses(id, actAggId, courtIds, judgementIds) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: '/accprocessadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId + '&courtIds=' + courtIds,
+            url: '/accprocessadmin/get-admin-ins-processes?id=' + id + '&actAggId=' + actAggId + '&courtIds=' + courtIds + '&judgementids=' + judgementIds,
             success: (results) => {
                 resolve(results);
             },
