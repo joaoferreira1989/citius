@@ -1,17 +1,12 @@
 function getActIdByName(connection, name) {
     return new Promise((resolve, reject) => {
-        let actName = name;
-        if (actName.startsWith('Ato: ')) {
-            actName = name.replace('Ato: ', '');
-        }
-
-        connection.query('SELECT * FROM `act` WHERE `name` = ?', [actName], (error, rows) => {
+        connection.query('SELECT * FROM `act` WHERE `name` = ?', [name], (error, rows) => {
             if (error) { return reject(error); }
 
             if (rows.length > 0) {
                 resolve(rows[0].id);
             } else {
-                addAct(connection, actName)
+                addAct(connection, name)
                     .then((insertId) => {
                         resolve(insertId);
                     })
