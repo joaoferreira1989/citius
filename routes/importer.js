@@ -1,7 +1,6 @@
 const express = require('express');
 const moment = require('moment');
 const router = express.Router();
-const { PEOPLE_TYPES } = require('../lib/tools/constants');
 const { doFetch } = require('../lib/req/citius');
 const { insertProcess } = require('../db/model/process');
 const insoActs = [

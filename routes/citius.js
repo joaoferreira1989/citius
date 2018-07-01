@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const { PEOPLE_TYPES } = require('../lib/tools/constants');
 const { exportToExcel } = require('../lib/exporter/csv');
 const { fetchExcelProcesses } = require('../db/model/process');
 
