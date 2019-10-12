@@ -29,7 +29,7 @@ const graphOptions = {
 
 $(document).ready(function () {
     initDatePicker();
-    fetchGraphsData('2018-01-01', '2018-12-31');
+    fetchGraphsData('2019-01-01', '2019-12-31');
 
     $('#search').on('click', () => {
         const startDate = moment($('#date-range').data('daterangepicker').startDate._d).format('YYYY-MM-DD');
