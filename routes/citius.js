@@ -3,6 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 const { exportToExcel } = require('../lib/exporter/csv');
 const { fetchExcelProcesses } = require('../db/model/process');
+const { DB_PEOPLE_TYPE_IDS } = require('../lib/tools/constants');
 
 router.get('/', function (req, res, next) {
     const initialDate = req.query.startdate;
@@ -20,15 +21,49 @@ router.get('/', function (req, res, next) {
                     const judgementSplit = process.judgement_name.split(' ');
                     const judgementNr = judgementSplit[judgementSplit.length - 1];
 
-                    return {
+                    const peopleNames = process.admin_name.split('||');
+                    const peopleNIfs = process.people_nif.split('||');
+                    const peopleTypeIds = process.people_type_id.split('||');
+
+                    let admin1, admin1Nif;
+                    let insolv1, insolv1Nif;
+                    let insolv2, insolv2Nif;
+
+
+                    for (let [index, peopleTypeId] of peopleTypeIds.entries()) {
+                        if (peopleTypeId == DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA) {
+                            admin1 = peopleNames[index];
+                            admin1Nif = peopleNIfs[index];
+                        }
+
+                        if (peopleTypeId == DB_PEOPLE_TYPE_IDS.INSOLVENTE) {
+                            if (!insolv1) {
+                                insolv1 = peopleNames[index];
+                                insolv1Nif = peopleNIfs[index];
+                            } else {
+                                insolv2 = peopleNames[index];
+                                insolv2Nif = peopleNIfs[index];
+                            }
+                        }
+                    };
+
+                    const row = {
                         processNumber: process.process_nr,
                         date: moment(process.process_date).format('DD-MM-YYYY'),
                         act: process.act_name,
                         court: process.court_name,
                         judgement: /^[0-9]+$/.test(judgementNr) ? judgementNr : '',
-                        admin1: process.admin_name,
-                        admin1Nif: process.people_nif
+                        admin1,
+                        admin1Nif,
+                        insolv1,
+                        insolv1Nif,
+                        insolv2,
+                        insolv2Nif
                     };
+
+                    console.log(row);
+
+                    return row;
                 });
             });
 
