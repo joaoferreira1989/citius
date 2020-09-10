@@ -61,8 +61,6 @@ router.get('/', function (req, res, next) {
                         insolv2Nif
                     };
 
-                    console.log(row);
-
                     return row;
                 });
             });
