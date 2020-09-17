@@ -3,7 +3,7 @@ const { pool } = require('../db');
 
 function getPeopleIdByNif(connection, name, nif, peopleTypeId) {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM `people` WHERE `nif` = ?', [nif], (error, rows) => {
+        connection.query('SELECT * FROM `people` WHERE `nif` = ? AND `people_type_id` = ?', [nif, peopleTypeId], (error, rows) => {
             if (error) { return reject(error); }
 
             if (rows.length > 0) {
