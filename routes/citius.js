@@ -3,7 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 const { exportToExcel } = require('../lib/exporter/csv');
 const { fetchExcelProcesses } = require('../db/model/process');
-const { DB_PEOPLE_TYPE_IDS } = require('../lib/tools/constants');
+const { DB_PEOPLE_TYPE_IDS, ACT_AGGREGATORS } = require('../lib/tools/constants');
 
 router.get('/', function (req, res, next) {
     const initialDate = req.query.startdate;
@@ -21,6 +21,9 @@ router.get('/', function (req, res, next) {
                     const judgementSplit = process.judgement_name.split(' ');
                     const judgementNr = judgementSplit[judgementSplit.length - 1];
 
+                    const aggregator = ACT_AGGREGATORS[process.act_aggregator_id];
+                    const aggregatorSecondPeopleType = aggregator === 'PER-PEAP' ? DB_PEOPLE_TYPE_IDS.DEVEDOR : DB_PEOPLE_TYPE_IDS.INSOLVENTE;
+
                     const peopleNames = process.admin_name.split('||');
                     const peopleNIfs = process.people_nif.split('||');
                     const peopleTypeIds = process.people_type_id.split('||');
@@ -36,7 +39,7 @@ router.get('/', function (req, res, next) {
                             admin1Nif = peopleNIfs[index];
                         }
 
-                        if (peopleTypeId == DB_PEOPLE_TYPE_IDS.INSOLVENTE) {
+                        if (peopleTypeId == aggregatorSecondPeopleType) {
                             if (!insolv1) {
                                 insolv1 = peopleNames[index];
                                 insolv1Nif = peopleNIfs[index];

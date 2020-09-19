@@ -116,7 +116,7 @@ function fetchProcessesByAdminInsAndDate(adminInsId, actAggregatorId, initialDat
 
 function fetchExcelProcesses(initialDate, finalDate, actAggrId = 1) {
     const query =
-        `select process.number as process_nr, process.date as process_date, act.name as act_name, court.name as court_name, judgement.name as judgement_name, GROUP_CONCAT(people.name SEPARATOR '||') as admin_name, GROUP_CONCAT(people.nif SEPARATOR '||') as people_nif, GROUP_CONCAT(people.people_type_id SEPARATOR '||') as people_type_id from process
+        `select process.number as process_nr, process.date as process_date, process.act_aggregator_id as act_aggregator_id, act.name as act_name, court.name as court_name, judgement.name as judgement_name, GROUP_CONCAT(people.name SEPARATOR '||') as admin_name, GROUP_CONCAT(people.nif SEPARATOR '||') as people_nif, GROUP_CONCAT(people.people_type_id SEPARATOR '||') as people_type_id from process
             join act on act.id = process.act_id
             join court on court.id = process.court_id
             join judgement on judgement.id = process.judgement_id
@@ -132,7 +132,7 @@ function fetchExcelProcesses(initialDate, finalDate, actAggrId = 1) {
         pool.getConnection((error, connection) => {
             connection.query(
                 query,
-                [actAggrId, initialDate, finalDate, [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, DB_PEOPLE_TYPE_IDS.INSOLVENTE]],
+                [actAggrId, initialDate, finalDate, [DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, DB_PEOPLE_TYPE_IDS.INSOLVENTE, DB_PEOPLE_TYPE_IDS.DEVEDOR]],
                 (error, rows) => {
                     if (error) { return reject(error); }
 
