@@ -4,7 +4,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 var app = require('./app');
 var debug = require('debug')('citius:server');
 var http = require('http');
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '5225');
 app.set('port', port);
 var server = http.createServer(app);
 
