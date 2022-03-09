@@ -45,6 +45,65 @@ function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate, court
     });
 }
 
+function hasProcessAdmin(processNr, act_aggregator_id) {
+    const query = `select process.number as process_nr, GROUP_CONCAT(people.name SEPARATOR '||') as people_names, GROUP_CONCAT(people.nif SEPARATOR '||') as people_nif from process
+        left join process_people on process.id = process_people.process_id
+        left join people on people.id = process_people.people_id
+        where process.number = ?
+        and people.people_type_id = ?
+        and process.act_aggregator_id = ?
+        group by process.id;`;
+
+    let filterValues = [processNr, DB_PEOPLE_TYPE_IDS.ADMINISTRADOR_INSOLVENCIA, act_aggregator_id];
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                filterValues,
+                (error, rows) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    connection.release();
+
+                    if (rows.length === 0 || !rows[0]) {
+                        resolve(false);
+                    }
+                    resolve(!!(rows[0] && rows[0].people_names));
+                });
+        });
+    });
+}
+
+function fetchProcessDetails(processNr, act_aggregator_id) {
+    const query = `select process.id as process_id from process
+        left join process_people on process.id = process_people.process_id
+        left join people on people.id = process_people.people_id
+        where process.number = ?
+        and process.act_aggregator_id = ?
+        group by process.id;`;
+
+    let filterValues = [processNr, act_aggregator_id];
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.query(
+                query,
+                filterValues,
+                (error, rows) => {
+                    if (error) {
+                        return reject(error);
+                    }
+
+                    connection.release();
+                    resolve(rows);
+                });
+        });
+    });
+}
+
 function fetchProcessesByAdminIns(adminInsId, actAggregatorId, courtIds, judgementIds) {
     const courtFilter = courtIds ? 'and process.court_id in (?)' : '';
     const judgementFilter = judgementIds ? 'and process.judgement_id in (?)' : '';
@@ -300,6 +359,39 @@ function addProcess(connection, processPeople, _number, _reference, _court_id, _
     });
 }
 
+function addPersonToProcess(person, processId) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((error, connection) => {
+            connection.beginTransaction(function (error) {
+                if (error) { return reject(error); }
+
+                let personTypeId = DB_PEOPLE_TYPE_IDS[person.type];
+
+                return getPeopleIdByNif(connection, person.name, person.nif, personTypeId)
+                    .then((personId) => {
+                        addProcessPeople(connection, processId, personId)
+                            .then((processPersonId) => {
+                                resolve(processPersonId);
+                            })
+                            .catch((error) => {
+                                return connection.rollback(() => reject(error));
+                            });
+                    })
+                    .catch((error) => {
+                        const personNif = person && person.nif;
+                        const errorMsg = error && error.sqlMessage;
+
+                        console.log('Error inserting person: ' + personNif, errorMsg);
+                        connection.rollback(() => { return reject(error); });
+                    })
+                    .then(() => {
+                        return connection.release();
+                    });
+            });
+        });
+    });
+}
+
 function addAllProcessPeople(connection, peopleIds, processId) {
     return new Promise((resolve, reject) => {
         let insertPromise = Promise.resolve();
@@ -363,6 +455,9 @@ module.exports = {
     fetchProcessesTotal,
     fetchProcessesByAdminIns,
     fetchAdminProcesses,
+    hasProcessAdmin,
+    addPersonToProcess,
+    fetchProcessDetails,
     fetchProcessesByAdminInsAndDate,
     fetchExcelProcesses
 };
