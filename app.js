@@ -20,7 +20,19 @@ const {
   startWeeklyCron1,
   startWeeklyCron2,
   startWeeklyCron3,
-  startWeeklyCron4
+  startWeeklyCron4,
+  startMonthlyCron1,
+  startMonthlyCron2,
+  startMonthlyCron3,
+  startMonthlyCron4,
+  startMonthlyCron5,
+  startMonthlyCron6,
+  startMonthlyCron7,
+  startMonthlyCron8,
+  startMonthlyCron9,
+  startMonthlyCron10,
+  startMonthlyCron11,
+  startMonthlyCron12
 } = require('./routes/cron');
 
 var app = express();
@@ -34,6 +46,18 @@ startWeeklyCron1();
 startWeeklyCron2();
 startWeeklyCron3();
 startWeeklyCron4();
+startMonthlyCron1();
+startMonthlyCron2();
+startMonthlyCron3();
+startMonthlyCron4();
+startMonthlyCron5();
+startMonthlyCron6();
+startMonthlyCron7();
+startMonthlyCron8();
+startMonthlyCron9();
+startMonthlyCron10();
+startMonthlyCron11();
+startMonthlyCron12();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -28,9 +28,16 @@ const insuActs = [
     'Pub. - Sent. Insolv. Insuficiência de Massa'
 ];
 
+/**
+ * http://localhost:5225/importer/inso?startdate=15-02-2021&enddate=15-02-2021
+ *
+ * http://localhost:5225/importer?aggr=inso&range=monthly&lastday=10     -> if we want the past month and it is march 10
+ *
+ */
 router.get('/', function (req, res, next) {
     const aggr = req.query.aggr;
     const range = req.query.range;
+    const lastDay = req.query.lastday || 0; // days until now, 0 = today
 
     let actsList;
     let aggregatorId;
@@ -55,44 +62,75 @@ router.get('/', function (req, res, next) {
             return res.send('invalid act aggregator');
     }
 
-    let initialDate;
-    let finalDate = moment();
+    let dayRange = 1;
     switch (range) {
         case 'daily':
-            initialDate = moment().subtract(1, 'days');
+            dayRange = 1;
             break;
         case 'weekly':
-            initialDate = moment().subtract(7, 'days');
+            dayRange = 7;
+            break;
+        case 'monthly':
+            dayRange = 30;
             break;
         default:
             return res.send('invalid range');
     }
 
-    if (!initialDate || !actsList) {
-        return res.send('invalid parameters');
-    }
+    const firstDay = parseInt(lastDay) + dayRange; // firstDay 40 && lastDay 10   ->   lastday = 10; range = monthly
+                                                   // firstDay 1 && lastDay 0     ->   lastday = 0; range = daily
 
-    initialDate.set({
-        hour: '00',
-        minute: '00',
-        second: '00',
-        millisecond: '000'
-    });
-    finalDate.set({
-        hour: '23',
-        minute: '59',
-        second: '59',
-        millisecond: '000'
-    });
+    const days = [...new Array(dayRange)].reduce((acc, _, index) => {
+        const currentDay = firstDay - index - 2;
+        const initialDate = moment().subtract(currentDay + 1, 'days');
+        const finalDate = moment().subtract(currentDay + 1, 'days');
 
-    doFetch(initialDate, finalDate, actsList).then((actList) => {
-        actList.forEach((processList) => {
-            insertProcesses(processList, aggregatorId);
+        initialDate.set({
+            hour: '00',
+            minute: '00',
+            second: '00',
+            millisecond: '000'
+        });
+        finalDate.set({
+            hour: '23',
+            minute: '59',
+            second: '59',
+            millisecond: '000'
         });
 
+        acc.push({ initialDate, finalDate });
+
+        return acc;
+    }, []);
+
+    console.log('=== Insert process will start for ===');
+    days.forEach(({ initialDate }) => console.log(moment(initialDate).format('YYYY-MM-DD')));
+    console.log('=====================================');
+
+    fetchAll(days, actsList, aggregatorId).then(() => {
         return res.send('done');
     });
 });
+
+function fetchAll(days, actsList, aggregatorId) {
+    var promise = Promise.resolve();
+
+    days.forEach(day => promise = promise.then(() => dailyFetch(day, actsList, aggregatorId)));
+
+    return promise;
+}
+
+function dailyFetch({ initialDate, finalDate }, actsList, aggregatorId) {
+    return new Promise((resolve, reject) => {
+        return doFetch(initialDate, finalDate, actsList).then((actList) => {
+            actList.forEach((processList) => {
+                insertProcesses(processList, aggregatorId);
+            });
+
+            resolve();
+        });
+    });
+}
 
 router.get('/inso/', function (req, res, next) {
     const initialDate = req.query.startdate;
@@ -202,7 +240,7 @@ function insertProcesses(processList, aggregatorId) {
                                             const processId = processDetails[0].process_id;
                                             const person = processPeople.find(person => person.type === PEOPLE_TYPES.ADMINISTRADOR_INSOLVENCIA);
 
-                                            addPersonToProcess(person, processId).then((processPersonId) => {
+                                            return addPersonToProcess(person, processId).then((processPersonId) => {
                                                 console.log('Process: ' + processNr + ' updated with processPersonId - ', processPersonId);
                                                 resolve();
                                             });
@@ -218,6 +256,8 @@ function insertProcesses(processList, aggregatorId) {
                                     });
                             } else {
                                 console.log('Error updating process: ' + processNr + ' - Cannot be updated because record has no admin');
+
+                                resolve();
                             }
                         }
 
