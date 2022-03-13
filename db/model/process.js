@@ -21,6 +21,7 @@ function fetchAdminProcesses(nif, actAggregatorId, initialDate, finalDate, court
         and process.act_aggregator_id = ?
         and process.date >= ?
         and process.date <= ?
+        group by process_number
         ${courtFilter}
         ${judgementFilter};`;
 
