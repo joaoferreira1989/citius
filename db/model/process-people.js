@@ -17,3 +17,23 @@ function addProcessPeople(connection, _processId, _peopleId) {
 module.exports = {
     addProcessPeople
 };
+
+/**
+ * Get Process people duplicates
+ *
+SELECT pp.process_id, pp.people_id FROM process_people pp
+GROUP BY pp.process_id, pp.people_id
+HAVING COUNT(1) > 1
+ORDER BY pp.process_id, pp.people_id;
+
+
+ * Delete Process people duplicates
+ *
+delete process_people from process_people
+left join (
+    select min(id) as minid from process_people
+    group by process_id, people_id) pp2
+on process_people.id = pp2.minid
+where pp2.minid is null;
+
+ */
