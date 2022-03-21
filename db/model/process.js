@@ -396,17 +396,18 @@ function addAllProcessPeople(connection, peopleIds, processId) {
     return new Promise((resolve, reject) => {
         let insertPromise = Promise.resolve();
         let personPeopleIds = [];
+        const uniquePeopleIds = [...new Set(peopleIds)];
 
-        for (let i = 0; i < peopleIds.length; i++) {
+        for (let i = 0; i < uniquePeopleIds.length; i++) {
             insertPromise = insertPromise.then(() => {
-                let personId = peopleIds[i];
+                let personId = uniquePeopleIds[i];
 
                 addProcessPeople(connection, processId, personId)
                     .then((processPersonId) => {
                         personPeopleIds.push(processPersonId);
 
                         // Resolve when all ProcessPeople is inserted
-                        if (personPeopleIds.length === peopleIds.length) {
+                        if (personPeopleIds.length === uniquePeopleIds.length) {
                             resolve(personPeopleIds);
                         }
                     })
