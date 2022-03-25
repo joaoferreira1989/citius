@@ -17,9 +17,9 @@
     "mysql": "github:mysqljs/mysql",
     "node-cron": "1.2.1",
     "node-excel-export": "1.4.3",
+    "node-fetch": "2.6.7",
     "pug": "2.0.0-beta11",
     "request": "2.83.0",
-    "request-promise": "4.2.2",
     "serve-favicon": "~2.4.5"
   }
 }
