@@ -6,7 +6,7 @@ function startDailyCron1() {
     cron.schedule('24 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=inso&range=daily'
+            url: 'http://80.211.173.129:8990/importer?aggr=inso&range=daily'
         });
     });
 }
@@ -15,7 +15,7 @@ function startDailyCron2() {
     cron.schedule('26 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=sub&range=daily'
+            url: 'http://80.211.173.129:8990/importer?aggr=sub&range=daily'
         });
     });
 }
@@ -24,7 +24,7 @@ function startDailyCron3() {
     cron.schedule('28 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=per&range=daily'
+            url: 'http://80.211.173.129:8990/importer?aggr=per&range=daily'
         });
     });
 }
@@ -33,7 +33,7 @@ function startDailyCron4() {
     cron.schedule('30 20 * * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=insu&range=daily'
+            url: 'http://80.211.173.129:8990/importer?aggr=insu&range=daily'
         });
     });
 }
@@ -43,7 +43,7 @@ function startWeeklyCron1() {
     cron.schedule('10 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=inso&range=weekly'
+            url: 'http://80.211.173.129:8990/importer?aggr=inso&range=weekly'
         });
     });
 }
@@ -52,7 +52,7 @@ function startWeeklyCron2() {
     cron.schedule('20 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=sub&range=weekly'
+            url: 'http://80.211.173.129:8990/importer?aggr=sub&range=weekly'
         });
     });
 }
@@ -61,7 +61,7 @@ function startWeeklyCron3() {
     cron.schedule('30 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=per&range=weekly'
+            url: 'http://80.211.173.129:8990/importer?aggr=per&range=weekly'
         });
     });
 }
@@ -70,7 +70,7 @@ function startWeeklyCron4() {
     cron.schedule('40 8 * * 0', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=insu&range=weekly'
+            url: 'http://80.211.173.129:8990/importer?aggr=insu&range=weekly'
         });
     });
 }
@@ -80,7 +80,7 @@ function startMonthlyCron1() {
     cron.schedule('0 1 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=inso&range=monthly&lastday=30'
+            url: 'http://80.211.173.129:8990/importer?aggr=inso&range=monthly&lastday=30'
         });
     });
 }
@@ -89,7 +89,7 @@ function startMonthlyCron2() {
     cron.schedule('0 1 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=sub&range=monthly&lastday=30'
+            url: 'http://80.211.173.129:8990/importer?aggr=sub&range=monthly&lastday=30'
         });
     });
 }
@@ -98,7 +98,7 @@ function startMonthlyCron3() {
     cron.schedule('0 1 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=per&range=monthly&lastday=30'
+            url: 'http://80.211.173.129:8990/importer?aggr=per&range=monthly&lastday=30'
         });
     });
 }
@@ -107,7 +107,7 @@ function startMonthlyCron4() {
     cron.schedule('0 1 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=insu&range=monthly&lastday=30'
+            url: 'http://80.211.173.129:8990/importer?aggr=insu&range=monthly&lastday=30'
         });
     });
 }
@@ -117,7 +117,7 @@ function startMonthlyCron5() {
     cron.schedule('0 2 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=inso&range=monthly&lastday=180'
+            url: 'http://80.211.173.129:8990/importer?aggr=inso&range=monthly&lastday=180'
         });
     });
 }
@@ -126,7 +126,7 @@ function startMonthlyCron6() {
     cron.schedule('0 2 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=sub&range=monthly&lastday=180'
+            url: 'http://80.211.173.129:8990/importer?aggr=sub&range=monthly&lastday=180'
         });
     });
 }
@@ -135,7 +135,7 @@ function startMonthlyCron7() {
     cron.schedule('0 2 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=per&range=monthly&lastday=180'
+            url: 'http://80.211.173.129:8990/importer?aggr=per&range=monthly&lastday=180'
         });
     });
 }
@@ -144,7 +144,7 @@ function startMonthlyCron8() {
     cron.schedule('0 2 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=insu&range=monthly&lastday=180'
+            url: 'http://80.211.173.129:8990/importer?aggr=insu&range=monthly&lastday=180'
         });
     });
 }
@@ -154,7 +154,7 @@ function startMonthlyCron9() {
     cron.schedule('0 3 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=inso&range=monthly&lastday=300'
+            url: 'http://80.211.173.129:8990/importer?aggr=inso&range=monthly&lastday=300'
         });
     });
 }
@@ -163,7 +163,7 @@ function startMonthlyCron10() {
     cron.schedule('0 3 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=sub&range=monthly&lastday=300'
+            url: 'http://80.211.173.129:8990/importer?aggr=sub&range=monthly&lastday=300'
         });
     });
 }
@@ -172,7 +172,7 @@ function startMonthlyCron11() {
     cron.schedule('0 3 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=per&range=monthly&lastday=300'
+            url: 'http://80.211.173.129:8990/importer?aggr=per&range=monthly&lastday=300'
         });
     });
 }
@@ -181,7 +181,7 @@ function startMonthlyCron12() {
     cron.schedule('0 3 1 * *', function () {
         return rp({
             method: 'GET',
-            url: 'http://80.211.173.129:5225/importer?aggr=insu&range=monthly&lastday=300'
+            url: 'http://80.211.173.129:8990/importer?aggr=insu&range=monthly&lastday=300'
         });
     });
 }

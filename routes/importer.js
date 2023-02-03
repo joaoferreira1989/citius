@@ -29,9 +29,9 @@ const insuActs = [
 ];
 
 /**
- * http://localhost:5225/importer/inso?startdate=15-02-2021&enddate=15-02-2021
+ * http://localhost:8990/importer/inso?startdate=15-02-2021&enddate=15-02-2021
  *
- * http://localhost:5225/importer?aggr=inso&range=monthly&lastday=10     -> if we want the past month and it is march 10
+ * http://localhost:8990/importer?aggr=inso&range=monthly&lastday=10     -> if we want the past month and it is march 10
  *
  */
 router.get('/', function (req, res, next) {
